@@ -1,0 +1,1080 @@
+<!doctype html>
+<html lang="zh-Hant-TW" data-theme="day">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Rewire 花園小鎮</title>
+<meta name="description" content="用闖關、探索與打造個人小鎮的方式，認識神經可塑性與日常習慣。雛形版。">
+<meta name="color-scheme" content="light dark">
+<style>
+:root{
+  --bg:#F4F1E8;--card:#FFFDF7;--card2:#F8F4E8;--ink:#2F3A33;--muted:#58655D;--line:#D9D2BF;
+  --primary:#3F6F52;--on-primary:#FFFFFF;--primary-soft:#DDEBDD;--accent:#8A4A38;--accent-soft:#F6DDD2;
+  --gold:#E8C46A;--focus:#1F5F94;--ok:#2F6A47;--ok-soft:#DCEFE0;--warn-soft:#FBEBD2;--warn:#7A4B14;
+  --sky1:#DDEEF0;--sky2:#F6F1E2;
+  --wL:#F5E6CE;--wR:#E9D5B4;--rL:#E0957C;--rR:#C9755F;--door:#A9805C;--glass:#CFE5EA;--frame:#FBF3E2;
+  --wood:#B58B63;--stone:#D6D0C2;--leaf1:#8DB07B;--leaf2:#A5C493;--leaf3:#6E9A66;--trunk:#9A7552;
+  --grass:#BFD9A6;--grass2:#CFE5B8;--soil1:#C9A27B;--soil2:#B58C66;--path:#EFE4C8;--pathEdge:#DCCDA7;
+  --sk:rgba(86,66,48,.55);--shadow:rgba(60,85,55,.20);--sign:#FFF6E2;--signink:#4A3A2C;
+  --font:"Noto Sans TC","PingFang TC","Microsoft JhengHei","Heiti TC",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+[data-theme="night"]{
+  --bg:#1B2430;--card:#25313F;--card2:#2C3A4A;--ink:#EAF0E8;--muted:#B9C6BE;--line:#3E4E5F;
+  --primary:#8CC5A0;--on-primary:#10261A;--primary-soft:#2F4A3F;--accent:#F0B39E;--accent-soft:#4A3733;
+  --gold:#E8C46A;--focus:#9CCBF4;--ok:#9AD6AF;--ok-soft:#27443A;--warn-soft:#4B3D28;--warn:#F2CF98;
+  --sky1:#18233C;--sky2:#2E3E55;
+  --wL:#7B7490;--wR:#675F7B;--rL:#B06C64;--rR:#8F5655;--door:#5E4A44;--glass:#FFD98A;--frame:#A9A3BA;
+  --wood:#7C6853;--stone:#6F7C80;--leaf1:#4F7A5E;--leaf2:#5D8A6A;--leaf3:#3E6450;--trunk:#5A4638;
+  --grass:#406C59;--grass2:#4B7B64;--soil1:#5B4B45;--soil2:#4B3D39;--path:#7C7B70;--pathEdge:#686759;
+  --sk:rgba(20,26,38,.65);--shadow:rgba(8,14,24,.38);--sign:#D9CBB0;--signink:#2B2420;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.7;
+  padding-bottom:calc(84px + env(safe-area-inset-bottom));overflow-x:hidden}
+body.lock{overflow:hidden}
+h1,h2,h3{line-height:1.35;margin:0}
+p{margin:0}
+button{font-family:inherit;font-size:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.app{max-width:1040px;margin:0 auto;padding:12px 14px 8px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 2px 12px}
+.brand{display:flex;flex-direction:column;line-height:1.25}
+.brand b{font-size:20px;letter-spacing:.04em}
+.brand span{font-size:13px;color:var(--muted);letter-spacing:.08em}
+.who{display:flex;align-items:center;gap:8px;padding:4px 14px 4px 6px;border:1.5px solid var(--line);border-radius:999px;background:var(--card);min-height:48px;cursor:pointer}
+.who svg{width:40px;height:40px;border-radius:50%;background:var(--primary-soft)}
+.who span{font-size:15px;max-width:9em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.card{background:var(--card);border:1.5px solid var(--line);border-radius:22px;padding:18px;box-shadow:0 8px 22px -14px var(--shadow)}
+.stack{display:flex;flex-direction:column;gap:14px}
+.row{display:flex;gap:14px;flex-wrap:wrap}
+.btn{white-space:nowrap;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 24px;border-radius:16px;border:2px solid var(--primary);
+  background:var(--primary);color:var(--on-primary);cursor:pointer;font-weight:700;letter-spacing:.04em;transition:transform .2s ease,box-shadow .2s ease}
+.btn:hover{transform:translateY(-1px);box-shadow:0 6px 14px -8px var(--shadow)}
+.btn:active{transform:scale(.97)}
+.btn[disabled]{background:var(--card2);border-color:var(--line);color:var(--muted);cursor:not-allowed;transform:none;box-shadow:none}
+.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line);font-weight:500}
+.btn.ghost:hover{border-color:var(--primary)}
+.btn.small{min-height:44px;padding:0 16px;font-size:15px}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:2px 12px;border-radius:999px;font-size:14px;background:var(--primary-soft);color:var(--ink);border:1px solid var(--line)}
+.chip.warn{background:var(--warn-soft);color:var(--warn)}
+.chip.ok{background:var(--ok-soft);color:var(--ok)}
+.segs{display:inline-flex;flex-wrap:wrap;gap:4px;padding:4px;border-radius:16px;background:var(--card2);border:1.5px solid var(--line)}
+.seg{min-height:44px;padding:0 14px;border-radius:12px;border:2px solid transparent;background:transparent;cursor:pointer;color:var(--muted);font-size:15px}
+.seg[aria-pressed="true"]{background:var(--primary);color:var(--on-primary);font-weight:700}
+.muted{color:var(--muted)}
+.small{font-size:14px}
+.hint-note{font-size:14px;color:var(--muted)}
+input[type=text],textarea{width:100%;font-family:inherit;font-size:16px;color:var(--ink);background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:12px 14px;min-height:48px}
+textarea{min-height:96px;resize:vertical}
+label.lab{display:block;font-size:15px;font-weight:700;margin:0 0 6px}
+
+/* tab bar */
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--card);border-top:1.5px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
+.tabs-in{max-width:620px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr)}
+.tab{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:64px;background:none;border:0;cursor:pointer;color:var(--muted);font-size:14px}
+.tab svg{width:26px;height:26px}
+.tab[aria-current="page"]{color:var(--primary);font-weight:700}
+[data-theme="night"] .tab[aria-current="page"]{color:var(--primary)}
+.tab[aria-current="page"] span{border-bottom:3px solid var(--gold)}
+
+/* town */
+.town-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
+@media(min-width:900px){.town-grid{grid-template-columns:minmax(0,1.9fr) minmax(300px,1fr);align-items:start}}
+.scene{position:relative;border-radius:24px;overflow:hidden;border:1.5px solid var(--line);aspect-ratio:1/1.2;max-height:78vh;width:100%;
+  background:radial-gradient(120% 70% at 20% 0%,#fff9 0 30%,#fff0 60%),linear-gradient(180deg,var(--sky1),var(--sky2) 70%);touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none}
+@media(min-width:640px){.scene{aspect-ratio:900/640}}
+.scene.drag{cursor:grabbing}
+.scene svg.map{position:absolute;inset:0;width:100%;height:100%;display:block}
+.scene-ctl{position:absolute;right:10px;bottom:10px;display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;max-width:calc(100% - 20px);z-index:2}
+.scene-ctl .btn{background:var(--card);color:var(--ink);border:1.5px solid var(--line);min-width:48px;padding:0 12px;font-weight:500}
+.scene-ctl .btn[aria-pressed="true"]{background:var(--primary);color:var(--on-primary);border-color:var(--primary)}
+.scene-tip{position:absolute;left:10px;top:10px;z-index:2;background:var(--card);border:1.5px solid var(--line);border-radius:999px;padding:2px 12px;font-size:13px;color:var(--muted)}
+.clouds{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.clouds i{position:absolute;display:block;height:26px;border-radius:999px;background:#fff;opacity:.55;filter:blur(3px);animation:drift 60s linear infinite}
+[data-theme="night"] .clouds i{opacity:.12}
+.clouds i:nth-child(1){width:110px;top:8%;left:-20%}
+.clouds i:nth-child(2){width:80px;top:18%;left:-40%;animation-duration:85s;animation-delay:-30s}
+.clouds i:nth-child(3){width:140px;top:5%;left:-60%;animation-duration:110s;animation-delay:-70s}
+@keyframes drift{to{transform:translateX(900px)}}
+.stars{position:absolute;inset:0;pointer-events:none;display:none}
+[data-theme="night"] .stars{display:block}
+.stars i{position:absolute;width:3px;height:3px;border-radius:50%;background:#fff;opacity:.7}
+.tray{display:flex;flex-wrap:wrap;gap:8px}
+.tray .btn{min-height:48px}
+.listbox{display:flex;flex-direction:column}
+.listbox button{display:flex;justify-content:space-between;align-items:center;gap:10px;min-height:56px;padding:6px 4px;background:none;border:0;border-bottom:1.5px dashed var(--line);cursor:pointer;text-align:left}
+.listbox button:last-child{border-bottom:0}
+.info h2{font-size:24px}
+.info ul{margin:8px 0;padding-left:1.2em}
+.lockline{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:15px}
+
+/* svg sprite colors */
+svg .wL{fill:var(--wL)}svg .wR{fill:var(--wR)}svg .rL{fill:var(--rL)}svg .rR{fill:var(--rR)}
+svg .door{fill:var(--door)}svg .glass{fill:var(--glass)}svg .frame{fill:var(--frame)}svg .wood{fill:var(--wood)}
+svg .stone{fill:var(--stone)}svg .l1{fill:var(--leaf1)}svg .l2{fill:var(--leaf2)}svg .l3{fill:var(--leaf3)}svg .trunk{fill:var(--trunk)}
+svg .path1{stroke:var(--pathEdge)}svg .path2{stroke:var(--path)}
+svg .sp *{stroke:var(--sk);stroke-width:1.3;stroke-linejoin:round;stroke-linecap:round}
+svg .sp .ns{stroke:none}
+svg .sil{opacity:.3}
+svg .sil *{fill:var(--stone)!important;stroke-dasharray:4 4}
+svg .hit{fill:rgba(0,0,0,0);stroke:none}
+svg .bld:focus-visible{outline:none}
+svg .bld:focus-visible .hit{stroke:var(--focus);stroke-width:3;fill:rgba(255,255,255,.18)}
+svg .bld{cursor:pointer}
+svg .bld:hover .hit{fill:rgba(255,255,255,.16)}
+svg .lbl rect{fill:var(--sign);stroke:var(--sk);stroke-width:1.2}
+svg .lbl text{fill:var(--signink);font-family:var(--font);text-anchor:middle;dominant-baseline:central}
+svg .lbl.sel rect{fill:var(--gold);stroke:var(--signink)}
+svg .lbl.sel text{fill:#2B2420}
+svg .tile{fill:rgba(255,255,255,.22);stroke:rgba(255,255,255,.6);stroke-width:1}
+svg .tile.ok{cursor:copy}svg .tile.ok:hover{fill:rgba(232,196,106,.6)}
+svg .tile.no{fill:rgba(0,0,0,.08);stroke:none;pointer-events:none}
+svg .rise{transform-box:fill-box;transform-origin:50% 100%;animation:rise .9s cubic-bezier(.2,1.5,.4,1) both}
+svg .putd{cursor:pointer}
+@keyframes rise{0%{transform:scale(.2,.05);opacity:0}100%{transform:scale(1);opacity:1}}
+.glow{filter:drop-shadow(0 0 5px rgba(255,217,138,.8))}
+
+/* lesson sheet */
+.sheet{position:fixed;inset:0;z-index:50;background:var(--bg);display:none;flex-direction:column}
+.sheet.on{display:flex}
+.sheet-head{padding:10px 14px 8px;border-bottom:1.5px solid var(--line);background:var(--card)}
+.sheet-head .r1{display:flex;align-items:center;justify-content:space-between;gap:8px;max-width:760px;margin:0 auto}
+.sheet-head h2{font-size:16px;flex:1;min-width:0;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sheet-head .btn{white-space:nowrap;padding:0 12px}
+.dots{display:flex;gap:5px;max-width:760px;margin:8px auto 0}
+.dots i{flex:1;height:7px;border-radius:5px;background:var(--line)}
+.dots i.on{background:var(--primary)}
+.sheet-body{flex:1;overflow:auto;padding:16px 14px 24px}
+.sheet-in{max-width:760px;margin:0 auto}
+.sheet-foot{padding:10px 14px calc(10px + env(safe-area-inset-bottom));border-top:1.5px solid var(--line);background:var(--card)}
+.sheet-foot .in{max-width:760px;margin:0 auto;display:flex;gap:10px;justify-content:space-between;align-items:center}
+.lesson-card h3{font-size:22px;margin-bottom:10px}
+.lesson-card p+p{margin-top:12px}
+.callout{margin-top:14px;padding:12px 14px;border-radius:16px;background:var(--warn-soft);color:var(--ink);border:1.5px dashed var(--line)}
+.callout b{color:var(--warn)}
+.kw{display:grid;gap:10px}
+.kw div{padding:12px 14px;border-radius:16px;background:var(--card2);border:1.5px solid var(--line)}
+.kw b{display:block;color:var(--primary)}
+[data-theme="night"] .kw b{color:var(--primary)}
+.opt{display:flex;align-items:flex-start;gap:10px;width:100%;text-align:left;min-height:52px;padding:10px 14px;margin-top:10px;border-radius:16px;border:1.5px solid var(--line);background:var(--card);cursor:pointer}
+.opt:hover{border-color:var(--primary)}
+.opt[aria-pressed="true"]{border:2px solid var(--primary);background:var(--primary-soft)}
+.opt.right{border:2px solid var(--ok);background:var(--ok-soft)}
+.opt.wrong{border:2px solid #C98A3A;background:var(--warn-soft)}
+.opt .mk{flex:none;width:26px;height:26px;border-radius:50%;border:2px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:14px;margin-top:1px}
+.feedback{margin-top:12px;padding:12px 14px;border-radius:16px;border:1.5px solid var(--line);background:var(--card2)}
+.feedback.good{background:var(--ok-soft);border-color:var(--ok)}
+.feedback.soft{background:var(--warn-soft)}
+.walkbox{border-radius:20px;overflow:hidden;border:1.5px solid var(--line);background:var(--grass)}
+.walkbox svg{display:block;width:100%;height:auto}
+.petals{position:relative;height:0}
+.petals i{position:absolute;top:-30px;width:12px;height:16px;border-radius:70% 0 70% 0;opacity:.85;animation:fall 6s linear infinite}
+@keyframes fall{0%{transform:translateY(0) rotate(0)}100%{transform:translateY(520px) rotate(340deg)}}
+.reward{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
+.reward .it{display:flex;align-items:center;gap:10px;padding:8px 14px 8px 8px;border-radius:16px;border:1.5px solid var(--line);background:var(--card2)}
+.reward .it svg{width:48px;height:48px;background:var(--primary-soft);border-radius:12px}
+
+/* wardrobe */
+.me-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
+@media(min-width:820px){.me-grid{grid-template-columns:300px minmax(0,1fr);align-items:start}}
+.preview{display:flex;flex-direction:column;align-items:center;gap:10px;background:linear-gradient(180deg,var(--sky1),var(--sky2));border-radius:20px;padding:14px;border:1.5px solid var(--line)}
+.preview svg{width:min(200px,60vw);height:auto}
+.opts{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:10px;margin-top:12px}
+.otile{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 4px;min-height:92px;border-radius:16px;border:1.5px solid var(--line);background:var(--card);cursor:pointer;font-size:13px;text-align:center;line-height:1.3}
+.otile svg{width:56px;height:56px}
+.otile[aria-pressed="true"]{border:2.5px solid var(--primary);background:var(--primary-soft);font-weight:700}
+.otile[disabled]{cursor:not-allowed;opacity:.78;background:var(--card2);border-style:dashed}
+.sw{width:40px;height:40px;border-radius:50%;border:2px solid var(--sk)}
+.postcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.pc{border-radius:16px;border:1.5px solid var(--line);background:var(--card);overflow:hidden}
+.pc .bar{height:34px;display:flex;align-items:center;padding:0 12px;font-size:13px;color:#2F3A33}
+.pc.chapter .bar{background:linear-gradient(90deg,#CFE5B8,#F2E2B5)}
+.pc.daily .bar{background:linear-gradient(90deg,#F6D9CC,#F2E2B5)}
+.pc p{padding:10px 12px;font-size:15px}
+.deco{display:flex;flex-wrap:wrap;gap:10px}
+.deco .d{display:flex;align-items:center;gap:8px;padding:6px 14px 6px 6px;border-radius:14px;border:1.5px solid var(--line);background:var(--card2)}
+.deco .d svg{width:44px;height:44px;background:var(--primary-soft);border-radius:10px}
+
+/* welcome */
+.welcome{position:fixed;inset:0;z-index:60;background:linear-gradient(180deg,var(--sky1),var(--bg));display:none;align-items:center;justify-content:center;padding:16px;overflow:auto}
+.welcome.on{display:flex}
+.welcome .card{max-width:480px;width:100%}
+.toast{position:fixed;left:50%;bottom:calc(90px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);opacity:0;z-index:80;background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:999px;font-size:15px;max-width:92vw;text-align:center;pointer-events:none;transition:opacity .3s,transform .3s}
+.toast.on{opacity:1;transform:translateX(-50%)}
+.foot{max-width:1040px;margin:8px auto 0;padding:14px 16px 0;font-size:13px;color:var(--muted);line-height:1.7}
+.foot p+p{margin-top:6px}
+section[hidden]{display:none}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<!-- 水彩濾鏡：邊緣微微不規則，像水彩暈開 -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <filter id="wc" x="-8%" y="-8%" width="116%" height="116%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="4" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="4.5" xChannelSelector="R" yChannelSelector="G" result="d"/>
+      <feGaussianBlur in="d" stdDeviation="0.45"/>
+    </filter>
+    <filter id="wcs" x="-8%" y="-8%" width="116%" height="116%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.06" numOctaves="2" seed="7" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="1.6" xChannelSelector="R" yChannelSelector="G" result="d"/>
+      <feGaussianBlur in="d" stdDeviation="0.25"/>
+    </filter>
+  </defs>
+</svg>
+
+<div id="app" class="app">
+  <header class="top">
+    <div class="brand"><b>Rewire 花園小鎮</b><span>神經可塑性・探索與練習</span></div>
+    <button type="button" class="who" id="whoBtn" aria-label="前往角色與收藏"></button>
+  </header>
+
+  <!-- 小鎮 -->
+  <section id="v-town" aria-labelledby="townH">
+    <h1 id="townH" class="sr">小鎮</h1>
+    <div class="town-grid">
+      <div class="stack">
+        <div class="row" style="justify-content:space-between;align-items:center">
+          <div class="segs" role="group" aria-label="顯示方式">
+            <button type="button" class="seg" id="modeMap" aria-pressed="true">地圖</button>
+            <button type="button" class="seg" id="modeList" aria-pressed="false">清單</button>
+          </div>
+          <span class="chip" id="progChip"></span>
+        </div>
+        <div class="scene" id="scene" aria-label="花園小鎮地圖。拖曳可移動，按鈕可旋轉與縮放。">
+          <div class="clouds" aria-hidden="true"><i></i><i></i><i></i></div>
+          <div class="stars" aria-hidden="true"></div>
+          <svg class="map" id="map" role="group" aria-label="建築與裝飾" xmlns="http://www.w3.org/2000/svg"></svg>
+          <div class="scene-tip" id="sceneTip">拖曳移動・點建築看看</div>
+          <div class="scene-ctl">
+            <button type="button" class="btn small" id="rotL" aria-label="向左旋轉">⟲</button>
+            <button type="button" class="btn small" id="rotR" aria-label="向右旋轉">⟳</button>
+            <button type="button" class="btn small" id="zoomOut" aria-label="縮小">−</button>
+            <button type="button" class="btn small" id="zoomIn" aria-label="放大">＋</button>
+            <button type="button" class="btn small" id="editBtn" aria-pressed="false">布置</button>
+          </div>
+        </div>
+        <div id="listBox" class="card listbox" hidden></div>
+        <div id="trayBox" class="card" hidden></div>
+      </div>
+      <aside id="infoBox" class="card info stack" aria-live="polite"></aside>
+    </div>
+  </section>
+
+  <!-- 角色與收藏 -->
+  <section id="v-me" hidden aria-labelledby="meH">
+    <h1 id="meH" class="sr">角色與收藏</h1>
+    <div class="stack">
+      <div id="firstBanner" class="card" hidden></div>
+      <div class="me-grid">
+        <div class="stack">
+          <div class="preview"><div id="meAvatar"></div>
+            <div style="width:100%"><label class="lab" for="nameIn">我的名字</label><input id="nameIn" type="text" maxlength="12" autocomplete="off" placeholder="例如：小禾"></div>
+            <div class="row" style="width:100%"><button type="button" class="btn ghost small" id="rndBtn" style="flex:1">隨機外觀</button><button type="button" class="btn ghost small" id="rstBtn" style="flex:1">還原預設</button></div>
+          </div>
+        </div>
+        <div class="card">
+          <h2 style="font-size:20px">打造我的角色</h2>
+          <p class="hint-note" style="margin:4px 0 10px">基本款一開始就能用；有鎖頭的款式，完成對應章節就會解鎖。</p>
+          <div class="segs" id="catSegs" role="group" aria-label="外觀項目"></div>
+          <div class="opts" id="opts" role="group"></div>
+        </div>
+      </div>
+      <div class="card stack">
+        <h2 style="font-size:20px">我的裝飾</h2>
+        <div id="decoBox" class="deco"></div>
+        <p class="hint-note">到「小鎮」按「布置」，就能把裝飾放進小鎮。</p>
+      </div>
+      <div class="card stack">
+        <h2 style="font-size:20px">明信片冊</h2>
+        <div id="pcBox" class="postcards"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 設定 -->
+  <section id="v-set" hidden aria-labelledby="setH">
+    <h1 id="setH" class="sr">設定</h1>
+    <div class="stack">
+      <div class="card stack">
+        <h2 style="font-size:20px">外觀</h2>
+        <div><div class="lab">日夜</div><div class="segs" id="segTheme" role="group" aria-label="日夜"></div></div>
+        <div><div class="lab">預設閱讀版本</div><div class="segs" id="segMode" role="group" aria-label="預設閱讀版本"></div>
+          <p class="hint-note" style="margin-top:6px">精簡版只讀每張卡的重點段落；完整版是全部文字。進入章節時還能再切換。</p></div>
+      </div>
+      <div class="card stack">
+        <h2 style="font-size:20px">資料與隱私</h2>
+        <p class="small muted">所有進度只存在這個瀏覽器的 localStorage（鍵名 rewire2:v1），沒有帳號、沒有伺服器，也沒有任何第三方請求。換瀏覽器或清除網站資料前，建議先備份。</p>
+        <div class="row">
+          <button type="button" class="btn ghost" id="expBtn">匯出備份（JSON）</button>
+          <label class="btn ghost" for="impFile" style="cursor:pointer">匯入備份</label>
+          <input id="impFile" class="sr" type="file" accept="application/json,.json">
+        </div>
+        <div><button type="button" class="btn ghost" id="clrBtn">清除紀錄</button>
+          <p class="hint-note" style="margin-top:6px">會清除章節進度、建築、裝飾與收藏；名字、角色與設定會保留。</p></div>
+      </div>
+      <div class="card stack">
+        <h2 style="font-size:20px">關於這個雛形</h2>
+        <p class="small muted">這是 Rewire v2 的可玩雛形：目前開放「第 1 章」與「每日心智練習」，其餘章節之後陸續開放。章節文字沿用 Rewire 第一版的原創內容。</p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <p>非官方、非醫療、不保證效果。本站內容為原創重新組織，以 Nicole Vignola《Rewire》等作品為參考，與作者、出版社無關；不是診斷、治療或心理諮商工具。</p>
+    <p>若你正感到難受，請找信任的人聊聊，或撥打求助專線：1925（安心）／1995（生命線）／1980（張老師）／119（緊急）。</p>
+    <p>原創文字與插畫採 CC BY-NC 4.0 授權。</p>
+  </footer>
+</div>
+
+<nav class="tabs" aria-label="主要選單"><div class="tabs-in">
+  <button type="button" class="tab" data-tab="town"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg><span>小鎮</span></button>
+  <button type="button" class="tab" data-tab="me"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-5 4-7 8-7s7 2 8 7"/></svg><span>角色與收藏</span></button>
+  <button type="button" class="tab" data-tab="set"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 00-.1-1.2l2-1.5-2-3.4-2.3.9a7 7 0 00-2-1.2L14.2 3h-4l-.4 2.6a7 7 0 00-2 1.2l-2.3-.9-2 3.4 2 1.5A7 7 0 005 12c0 .4 0 .8.1 1.2l-2 1.5 2 3.4 2.3-.9a7 7 0 002 1.2l.4 2.6h4l.4-2.6a7 7 0 002-1.2l2.3.9 2-3.4-2-1.5c.1-.4.1-.8.1-1.2z"/></svg><span>設定</span></button>
+</div></nav>
+
+<!-- 章節 / 每日練習 -->
+<div id="sheet" class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetT">
+  <div class="sheet-head">
+    <div class="r1"><button type="button" class="btn ghost small" id="sheetBack">‹ 回小鎮</button><h2 id="sheetT" tabindex="-1"></h2><span style="width:64px" aria-hidden="true"></span></div>
+    <div class="dots" id="sheetDots" role="progressbar" aria-label="章節進度" aria-valuemin="1"></div>
+  </div>
+  <div class="sheet-body" id="sheetBody"><div class="sheet-in" id="sheetIn"></div></div>
+  <div class="sheet-foot"><div class="in" id="sheetFoot"></div></div>
+</div>
+
+<!-- 歡迎 -->
+<div id="welcome" class="welcome" role="dialog" aria-modal="true" aria-labelledby="welT">
+  <div class="card stack">
+    <div><span class="chip">雛形版</span></div>
+    <h2 id="welT" style="font-size:26px">歡迎來到花園小鎮</h2>
+    <p class="muted">這裡沒有輸贏，也沒有倒數。每讀完一章，就蓋好一棟建築；慢慢走，小鎮會慢慢長大。</p>
+    <div><label class="lab" for="welName">你想怎麼被稱呼？</label><input id="welName" type="text" maxlength="12" autocomplete="off" placeholder="例如：小禾"></div>
+    <button type="button" class="btn" id="welGo">出發，先打造角色</button>
+    <p class="hint-note">進度只存在這個瀏覽器裡。非官方、非醫療、不保證效果。</p>
+  </div>
+</div>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+'use strict';
+
+/* ========================================================== 內容（沿用 Rewire v1 第 1 章原文） */
+var CH=[
+ {n:1,t:'神經可塑性的底層原理',b:'小徑工坊'},
+ {n:2,t:'負面偏見與注意力過濾',b:'濾光溫室'},
+ {n:3,t:'身份認同與成長型思維',b:'身份花房'},
+ {n:4,t:'自我對話與身心反應',b:'對話長廊'},
+ {n:5,t:'自我批判與習慣改變',b:'慈心涼亭'},
+ {n:6,t:'66 天習慣養成與非線性改變',b:'日曆菜圃'},
+ {n:7,t:'七個日常練習',b:'練習工作室'},
+ {n:8,t:'如何設計容易執行的行為改變？',b:'設計小屋'},
+ {n:9,t:'研究限制與批判性思考',b:'思辨圖書館'}
+];
+var C1={
+ title:'神經可塑性的底層原理',sub:'重複的經驗，如何慢慢把小徑走成大道',minutes:14,
+ objectives:['說明神經可塑性的定義與它「能做到」和「做不到」的事。','理解神經元、突觸與神經迴路的基本關係。','用 Hebbian Learning 解釋重複練習為何讓行為更流暢。','認識壓力與睡眠不足如何讓我們更依賴舊習慣。'],
+ concepts:[
+  ['神經可塑性 Neuroplasticity','神經系統依據經驗、學習與環境，調整其結構與功能的能力。'],
+  ['突觸 Synapse','神經元之間傳遞訊號的接點，其傳遞效率可以增強或減弱。'],
+  ['Hebbian Learning','當兩個神經元經常一起活化，它們之間的連結傾向被強化的學習原則。'],
+  ['執行功能 Executive Functions','包含工作記憶、抑制控制與認知彈性，幫助我們依目標而非衝動行事。']],
+ sections:[
+  {id:'definition',h:'1. 神經可塑性是什麼？',p:['神經可塑性指的是大腦會隨著經驗而改變。學一個新語言、練習一首曲子、適應新的工作流程，大腦中負責處理這些資訊的連結都可能被調整。','這個概念推翻了過去「成年後大腦就定型」的看法，但也常被過度包裝。可塑性代表「有改變的可能」，不代表任何改變都容易、快速或必然發生；年齡、健康、環境與練習方式都會影響改變的幅度。']},
+  {id:'neurons',h:'2. 神經元、突觸與神經迴路',p:['神經元是傳遞訊息的細胞。它透過樹突接收訊號，經由軸突把訊號傳出去，在末端的突觸釋放神經傳導物質，影響下一個神經元。','單一神經元做不了太多事；真正有意義的功能，來自許多神經元串聯成的「迴路」。一個習慣、一段記憶或一種情緒反應，都對應到分布在不同腦區的活動模式，而不是某一個「開關」。']},
+  {id:'hebb',h:'3. Hebbian Learning：一起活化，一起連結',p:['心理學家 Donald Hebb 在 1949 年提出：如果一個神經元反覆參與讓另一個神經元活化，兩者之間的連結就會變得更有效率。後人把它濃縮成一句口訣：Neurons that fire together, wire together。','這可以幫助我們理解聯想學習：每天早上一起床就拿手機，「起床」與「拿手機」就越來越容易一起出現。不過口訣是簡化版本，真實的突觸調整還受到時間順序、神經調節物質與許多細胞機制影響。']},
+  {id:'synaptic',h:'4. 突觸可塑性：連結強度的增減',p:['1970 年代的動物研究觀察到「長期增益效應」（LTP）：反覆刺激某條神經通路後，突觸傳遞效率可以維持較長時間的提升；相反地，也有讓連結減弱的「長期抑制」（LTD）。','換句話說，大腦不只會「增加」連結，也會「修剪」不常使用的連結。這讓學習有彈性：被持續使用的模式被保留，較少使用的模式逐漸淡化，但通常不會瞬間消失。']},
+  {id:'habit',h:'5. 大腦如何透過重複建立習慣',p:['當某個行為在相同情境下一再發生，並帶來某種回饋，情境與行為之間的連結就逐漸加強。久而久之，只要情境出現，行為就容易被啟動，不需要太多思考。','這也是為什麼「換一個情境」常能幫助改變：搬家、換座位、旅行時，舊的提示消失了，我們比較有機會建立新的反應。']},
+  {id:'metaphor',h:'6. 羊腸小徑與柏油大道',p:['想像大腦裡有一條走了很多年的柏油大道：舊習慣。路很平、很好走，幾乎不用想就會走上去。新的習慣則像草叢中剛踩出的小徑，一開始很難走，常常不小心又回到大道上。','每多走一次小徑，草就被踩平一些；大道少走了，邊緣也會慢慢長出草來。這個比喻提醒我們：改變需要時間，回到大道不代表失敗，只代表小徑還在建造中。'],call:['比喻的限制','大腦不是真的有「道路」。這個比喻用來說明「重複讓行為更容易」，不代表可以精確描述突觸的變化。']},
+  {id:'automatic',h:'7. 習慣的自動化機制',p:['研究者發現，新學習的行為較依賴目標導向的評估，而高度重複的行為會轉為由情境提示啟動的「習慣模式」。這種轉移很有效率：它讓我們刷牙、開車、打字時不需要每一步都思考。','代價是：自動化的行為較不容易被當下的意圖改變。即使知道某個習慣對自己不好，提示出現時，舊反應仍可能先跑出來。理解這一點，能減少「我就是意志力太差」的自責。']},
+  {id:'stress',h:'8. 壓力、睡眠不足與認知功能',p:['短期適度的壓力能提升專注，但強烈或長期的壓力，會透過神經化學訊號暫時削弱前額葉皮質的功能。睡眠不足也有類似效果，讓注意力、情緒調節與判斷變差。','這些狀態下，大腦較依賴熟悉且省力的反應。實驗也發現，壓力會讓人更傾向依習慣行事，而不是根據目標做選擇。']},
+  {id:'pfc',h:'9. 前額葉、工作記憶與抑制控制',p:['前額葉皮質參與許多執行功能：工作記憶讓我們把目標「放在心上」；抑制控制讓我們能暫停衝動；認知彈性讓我們能換個角度思考。','這些功能需要耗費心智資源，也會受到疲勞、壓力、孤獨與身體狀況影響。因此，與其把改變寄託在「更努力忍住」，不如同時照顧睡眠、休息與環境設計。']},
+  {id:'tired',h:'10. 疲勞時，為何更容易選擇熟悉與立即回饋？',p:['疲勞時，評估長期利益所需的心智資源較少，大腦更容易被「現在就能得到」的回饋吸引：甜食、滑手機、拖延不想做的事。熟悉的行為又不需要額外思考，於是成為最省力的選項。','實用的推論是：把重要的新行為安排在精神較好的時段，並讓疲勞時的「預設選項」變得對自己更友善，例如睡前把書放在床頭、把手機放遠一點。']}
+ ],
+ /* 精簡版：每張卡只讀重點段落（段落編號從 0 開始），全文一字未改 */
+ shortPick:{definition:[0],hebb:[0],metaphor:[0,1],stress:[0],tired:[1]},
+ cases:[
+  {t:'下班後的沙發',s:'小安決定下班後運動，但每天回家一坐上沙發，就開始看影片到深夜。她覺得自己沒有毅力。',i:'下班時的疲勞讓前額葉資源較少，「進門 → 沙發 → 影片」又是重複多年的路徑。把運動改到早上，或回家前先在公司附近運動 15 分鐘，比單靠意志力更可能成功。'},
+  {t:'新同事的鍵盤快捷鍵',s:'阿哲換到新公司，系統快捷鍵和以前不同，前兩週常按錯，到了第二個月幾乎不需要思考。',i:'這是日常生活中可觀察的學習歷程：一開始需要刻意注意，重複後逐漸自動化。舊習慣偶爾跑出來也很正常。'}
+ ],
+ apps:['選一個非常小的新行為，固定在同一個情境中重複，例如「倒完咖啡後，做 3 次深呼吸」。','在精神較好的時段練習困難的新行為，疲勞時降低要求。','改變環境提示，讓舊習慣多一步、新習慣少一步。','回到舊模式時，提醒自己「小徑還在建造中」，而不是全盤否定。'],
+ reflection:'我的生活中，有哪一條「柏油大道」是我想慢慢少走的？又有哪一條「小徑」值得我開始踩出來？',
+ quiz:[
+  {q:'關於神經可塑性，下列哪一個說法最準確？',o:['成年人的大腦已經定型，不會再改變','大腦會依經驗調整，但改變的幅度與速度因人和情境而異','只要相信自己，大腦就會立刻改變','神經可塑性只發生在兒童時期'],a:1,e:'可塑性代表「有改變的可能」，但改變受到年齡、健康、練習方式與環境等多重因素影響。'},
+  {q:'「Neurons that fire together, wire together」主要描述什麼現象？',o:['神經元會自行分裂增加','經常一起活化的神經元，連結傾向被強化','大腦會自動刪除所有舊記憶','睡眠時神經元停止運作'],a:1,e:'這是 Hebbian Learning 的通俗說法；它是簡化描述，真實機制更複雜。'},
+  {q:'為什麼在壓力大或睡眠不足時，比較容易回到舊習慣？',o:['因為舊習慣的神經連結會在壓力下消失','因為前額葉的調控功能暫時減弱，大腦較依賴熟悉省力的反應','因為壓力會讓人變得更有意志力','因為睡眠不足會讓新習慣自動形成'],a:1,e:'研究顯示壓力與睡眠不足會削弱執行功能，並讓人更傾向習慣性反應。'},
+  {q:'「羊腸小徑與柏油大道」比喻的最佳理解是？',o:['精確描述了大腦中真實存在的道路','說明重複讓行為更容易，回到舊路不代表失敗','證明舊習慣永遠不會改變','說明只要走一次新路就會成功'],a:1,e:'比喻是幫助理解的工具，重點在於重複與時間，而不是精確的生理描述。'}
+ ],
+ summary:['神經可塑性是大腦依經驗調整的能力，但不是保證或捷徑。','神經迴路透過反覆共同活化而強化，也會修剪不常使用的連結。','習慣是情境提示與行為的連結，經重複後會自動化。','壓力、疲勞與睡眠不足會讓我們更依賴熟悉與立即回饋的行為。','照顧身心狀態與設計環境，比單靠意志力更可靠。']
+};
+/* 每日七句：text 欄位原文與順序鎖定，請勿修改 */
+var DAILY=[
+ {id:1,theme:'安全感',text:'我現在是安全的',meaning:'練習辨識當下實際的環境，區分目前的情況與過去的威脅經驗。',reflection:'此時此刻，有哪些具體證據讓我感到安全？',action:'觀察周圍環境，感受雙腳接觸地面的感覺，配合自然緩慢的呼吸。',note:'若你正處於實際危險中，請以確保安全及尋求協助為優先（緊急狀況請撥打 110 或 119）。'},
+ {id:2,theme:'成長與可能性',text:'我的大腦可以改變',meaning:'理解神經可塑性，相信自己仍然具有學習與調整行為的可能性。',reflection:'最近有哪件事情，讓我發現自己正在學習或進步？',action:'今天選擇一個可以在五分鐘內完成的新行動。'},
+ {id:3,theme:'自我接納',text:'我已經足夠好了',meaning:'練習將自我價值與單次表現區分，減少過度依賴外界評價。',reflection:'如果暫時放下成績、效率和別人的眼光，我會如何看待自己的價值？',action:'寫下自己一個值得欣賞的特質，並提出一個具體例子。'},
+ {id:4,theme:'面對錯誤',text:'犯錯是我成長的方式',meaning:'培養成長型思維，將可以學習的錯誤視為調整策略的資訊。',reflection:'最近一次犯錯，讓我學到了什麼？',action:'寫下一次錯誤、一項收穫，以及下一次可以調整的行動。'},
+ {id:5,theme:'認知覺察',text:'我的想法不等於事實',meaning:'練習辨識自動化想法、認知偏誤及未經驗證的推論。',reflection:'今天有哪些讓我感到焦慮的想法，仍然需要更多證據？',action:'將一個負面想法拆解成「客觀事實」「個人推測」「其他可能解釋」。'},
+ {id:6,theme:'自我價值',text:'我的存在很重要',meaning:'練習自我尊重與自我關懷，理解個人價值具有多個面向。',reflection:'我曾經透過什麼樣的小行動，為自己或他人的生活帶來正面影響？',action:'寫下一件今天值得珍惜的小事。'},
+ {id:7,theme:'新的開始',text:'今天是新的機會',meaning:'培養心理彈性，讓自己在挫折或計畫中斷後，重新選擇可行的下一步。',reflection:'如果今天只完成一件對自己有幫助的事，我希望是什麼？',action:'設定一項具體、可執行的小目標。'}
+];
+var NO_PRESSURE='如果某一句話今天讀起來很遙遠、甚至讓你不舒服，這很正常。你可以只是「讀過」，或把它改成「我正在練習相信……」。不需要強迫自己產生正向情緒。';
+
+/* ========================================================== 角色選項 */
+var OPT={
+ skin:[{c:'#F8DCC4',name:'淺杏'},{c:'#EFC6A2',name:'蜜桃'},{c:'#DCA67C',name:'小麥'},{c:'#B98258',name:'焦糖'},{c:'#8C5B3E',name:'可可'}],
+ face:[{id:'round',name:'圓臉'},{id:'oval',name:'鵝蛋臉'}],
+ hairStyle:[{id:'short',name:'短髮'},{id:'bob',name:'鮑伯'},{id:'long',name:'長髮'},{id:'bun',name:'丸子頭'},{id:'curly',name:'捲髮'},{id:'pony',name:'馬尾'}],
+ hairColor:[{c:'#3B2A22',name:'墨黑'},{c:'#6B4630',name:'栗棕'},{c:'#A56B3A',name:'焦糖棕'},{c:'#DDB05A',name:'蜜金'},{c:'#CFCAC0',name:'銀灰'},{c:'#E59AA0',name:'櫻粉'},{c:'#6A8DB0',name:'霧藍'}],
+ eyes:[{id:'dot',name:'圓眼'},{id:'happy',name:'彎彎眼'},{id:'sparkle',name:'亮晶晶'},{id:'sleepy',name:'慵懶眼'}],
+ brows:[{id:'soft',name:'柔眉'},{id:'straight',name:'平眉'},{id:'none',name:'無眉'}],
+ mouth:[{id:'smile',name:'微笑'},{id:'open',name:'開心'},{id:'flat',name:'小口'},{id:'cat',name:'貓嘴'}],
+ outfit:[{id:'apron',name:'園藝圍裙'},{id:'sweater',name:'毛衣'},{id:'overalls',name:'吊帶褲'},{id:'dress',name:'洋裝'}],
+ outfitColor:[{c:'#8FB3A2',name:'鼠尾草'},{c:'#E9B8A8',name:'珊瑚粉'},{c:'#F2D58B',name:'奶油黃'},{c:'#9DB7D4',name:'天空藍'},{c:'#C9A7C9',name:'薰衣草'},{c:'#EFE6D6',name:'燕麥白'}],
+ shoes:[{id:'boots',name:'短靴'},{id:'sneakers',name:'布鞋'}],
+ acc:[{id:'none',name:'無'},{id:'round',name:'圓框眼鏡'},{id:'square',name:'方框眼鏡'},{id:'freckles',name:'雀斑'}],
+ head:[{id:'none',name:'無'},{id:'sprout',name:'嫩芽'},{id:'flowers',name:'花環'},{id:'bow',name:'蝴蝶結'},{id:'straw',name:'草帽',req:'ch1',reqName:'第 1 章'}]
+};
+var CATS=[['skin','膚色'],['face','臉型'],['hairStyle','髮型'],['hairColor','髮色'],['eyes','眼睛'],['brows','眉毛'],['mouth','嘴巴'],['outfit','服裝'],['outfitColor','服裝顏色'],['shoes','鞋子'],['acc','臉部配件'],['head','頭飾']];
+var CRAWL={skin:'head',face:'head',hairStyle:'head',hairColor:'head',eyes:'head',brows:'head',mouth:'head',acc:'head',head:'head',outfit:'body',outfitColor:'body',shoes:'body'};
+/* 之後章節才會解鎖的款式（先以鎖頭預告） */
+var FUTURE={shoes:[['雨靴',2]],acc:[['小圍巾',3]],head:[['貓耳髮箍',4]],outfit:[['旅人披風',5]]};
+var SWATCH={skin:1,hairColor:1,outfitColor:1};
+function defaultLook(){return {skin:1,face:'round',hairStyle:'short',hairColor:2,eyes:'dot',brows:'soft',mouth:'smile',outfit:'apron',outfitColor:0,shoes:'boots',acc:'none',head:'sprout'};}
+
+/* ========================================================== 裝飾 */
+var DECO={bush:'花叢',tree:'小樹',stone:'小徑石板',flower:'小花'};
+
+/* ========================================================== 存檔 */
+var KEY='rewire2:v1',REV=1,N=10;
+function emptyData(){return {rev:REV,onboarded:false,player:{name:'',look:defaultLook()},progress:{},names:{},inv:{bush:3,tree:2,stone:0,flower:0},unlocks:[],placed:[],postcards:[],daily:{date:'',id:0},settings:{theme:'auto',mode:'short'}};}
+function nInt(v,d,min,max){v=Math.floor(+v);if(!isFinite(v))return d;return Math.max(min,Math.min(max,v));}
+function str(v,max){return typeof v==='string'?v.slice(0,max):'';}
+function normalize(raw){
+  var d=emptyData();if(!raw||typeof raw!=='object')return d;
+  d.onboarded=!!raw.onboarded;
+  if(raw.player&&typeof raw.player==='object'){
+    d.player.name=str(raw.player.name,12);
+    var L=raw.player.look||{},D=defaultLook();
+    Object.keys(D).forEach(function(k){
+      var v=L[k];
+      if(SWATCH[k]){d.player.look[k]=(typeof v==='number'&&OPT[k][v])?v:D[k];}
+      else{d.player.look[k]=OPT[k].some(function(o){return o.id===v})?v:D[k];}
+    });
+  }
+  if(raw.progress&&raw.progress.ch1&&raw.progress.ch1.done){var p=raw.progress.ch1;d.progress.ch1={done:true,at:str(p.at,40),mode:p.mode==='full'?'full':'short',action:nInt(p.action,0,0,3),reflection:str(p.reflection,600),take:nInt(p.take,0,0,4)};}
+  if(raw.names&&typeof raw.names==='object'){['ch1'].forEach(function(k){if(raw.names[k])d.names[k]=str(raw.names[k],12);});}
+  if(raw.inv&&typeof raw.inv==='object'){Object.keys(DECO).forEach(function(k){if(raw.inv[k]!==undefined)d.inv[k]=nInt(raw.inv[k],d.inv[k],0,999);});}
+  if(Array.isArray(raw.unlocks))d.unlocks=raw.unlocks.filter(function(u){return u==='ch1'});
+  if(Array.isArray(raw.placed)){var seen={};raw.placed.forEach(function(o){if(o&&DECO[o.id]){var x=nInt(o.x,-1,-1,N-1),y=nInt(o.y,-1,-1,N-1);if(x>=0&&y>=0&&!seen[x+','+y]){seen[x+','+y]=1;d.placed.push({id:o.id,x:x,y:y});}}});}
+  if(Array.isArray(raw.postcards)){raw.postcards.slice(0,200).forEach(function(c){if(c&&typeof c==='object'&&c.id)d.postcards.push({id:str(c.id,20),kind:c.kind==='daily'?'daily':'chapter',title:str(c.title,40),text:str(c.text,200),at:str(c.at,40)});});}
+  if(raw.daily&&typeof raw.daily==='object'){d.daily.date=str(raw.daily.date,10);d.daily.id=nInt(raw.daily.id,0,0,7);}
+  if(raw.settings&&typeof raw.settings==='object'){
+    d.settings.theme=['auto','day','night'].indexOf(raw.settings.theme)>=0?raw.settings.theme:'auto';
+    d.settings.mode=raw.settings.mode==='full'?'full':'short';
+  }
+  return d;
+}
+function load(){try{var s=localStorage.getItem(KEY);return s?normalize(JSON.parse(s)):emptyData();}catch(e){return emptyData();}}
+var memOnly=false;
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){if(!memOnly){memOnly=true;toast('這個瀏覽器無法儲存進度（可能是無痕模式）。');}}}
+var S=load();
+
+/* ========================================================== 小工具 */
+function $(s,r){return (r||document).querySelector(s);}
+function $$(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s));}
+function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function today(){var d=new Date();return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);}
+function nowISO(){return new Date().toISOString();}
+function mix(a,b,t){function h(x){return [parseInt(x.slice(1,3),16),parseInt(x.slice(3,5),16),parseInt(x.slice(5,7),16)];}var A=h(a),B=h(b);return '#'+A.map(function(v,i){var r=Math.round(v+(B[i]-v)*t);return ('0'+r.toString(16)).slice(-2);}).join('');}
+var toastT;function toast(m){var t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toastT);toastT=setTimeout(function(){t.classList.remove('on');},3200);}
+function unlocked(req){return !req||S.unlocks.indexOf(req)>=0;}
+function buildingName(id){if(id==='daily')return '晨光亭';var i=+id.slice(2);return S.names[id]||CH[i-1].b;}
+function done(id){return !!S.progress[id];}
+function chapterState(i){if(done('ch'+i))return 'built';if(i===1)return 'open';return 'locked';}
+
+/* ========================================================== 主題 */
+var mq=window.matchMedia?window.matchMedia('(prefers-color-scheme: dark)'):null;
+function applyTheme(){var t=S.settings.theme,eff=t==='auto'?((mq&&mq.matches)?'night':'day'):t;document.documentElement.setAttribute('data-theme',eff);}
+if(mq&&mq.addEventListener)mq.addEventListener('change',function(){if(S.settings.theme==='auto'){applyTheme();renderTown();}});
+
+/* ========================================================== 角色 SVG */
+function charG(L,o){
+  o=o||{};
+  var skin=OPT.skin[L.skin].c,sk2=mix(skin,'#6A3E22',.3),hair=OPT.hairColor[L.hairColor].c,hair2=mix(hair,'#000000',.2),oc=OPT.outfitColor[L.outfitColor].c,oc2=mix(oc,'#000000',.16);
+  var INK='#4A3426',cream='#F4EBDD',fw=L.face==='round'?30:27,fh=L.face==='round'?28:32,s='';
+  s+='<ellipse cx="60" cy="166" rx="26" ry="5" fill="rgba(70,90,60,.2)"/>';
+  /* 後髮 */
+  var hs=L.hairStyle;
+  if(hs==='bob')s+='<path d="M25,50 Q20,96 36,96 L84,96 Q100,96 95,50 Z" fill="'+hair2+'"/>';
+  if(hs==='long')s+='<path d="M24,48 Q12,112 30,122 L90,122 Q108,112 96,48 Z" fill="'+hair2+'"/>';
+  if(hs==='pony')s+='<path d="M86,36 Q120,40 108,92 Q102,106 94,88 Q100,66 84,56 Z" fill="'+hair2+'"/><circle cx="88" cy="40" r="5" fill="#E59AA0"/>';
+  if(hs==='bun')s+='<circle cx="60" cy="15" r="13" fill="'+hair2+'"/><circle cx="60" cy="15" r="13" fill="none" stroke="'+hair+'" stroke-width="2" opacity=".5"/>';
+  if(hs==='curly'){[[28,44],[92,44],[22,62],[98,62],[30,80],[90,80],[40,24],[80,24],[60,18]].forEach(function(p){s+='<circle cx="'+p[0]+'" cy="'+p[1]+'" r="12" fill="'+hair2+'"/>';});}
+  /* 腿與鞋 */
+  var leg=L.outfit==='overalls'?oc2:skin;
+  s+='<rect x="49" y="128" width="9" height="30" rx="4" fill="'+leg+'"/><rect x="62" y="128" width="9" height="30" rx="4" fill="'+leg+'"/>';
+  if(L.shoes==='boots'){s+='<path d="M46,148 h14 v10 q4,0 5,5 q0,5 -6,5 h-12 q-6,0 -6,-5 q1,-5 5,-5 z" fill="#8B6A4F"/><path d="M60,148 h14 v10 q4,0 5,5 q0,5 -6,5 h-12 q-6,0 -6,-5 q1,-5 5,-5 z" fill="#8B6A4F" transform="translate(0,0)"/><rect x="46" y="148" width="14" height="4" fill="#6F523B"/><rect x="60" y="148" width="14" height="4" fill="#6F523B"/>';}
+  else{s+='<ellipse cx="52" cy="160" rx="10" ry="6" fill="#FBF6EA"/><ellipse cx="68" cy="160" rx="10" ry="6" fill="#FBF6EA"/><path d="M43,163 h18 M59,163 h18" stroke="#CDBFA3" stroke-width="2"/><path d="M52,156 l3,-2 M68,156 l3,-2" stroke="'+oc2+'" stroke-width="2"/>';}
+  /* 身體 */
+  var base=oc,sleeve=oc;
+  if(L.outfit==='apron'||L.outfit==='overalls'){base=cream;sleeve=cream;}
+  s+='<ellipse cx="35" cy="104" rx="7" ry="16" transform="rotate(8 35 104)" fill="'+sleeve+'"/><ellipse cx="85" cy="104" rx="7" ry="16" transform="rotate(-8 85 104)" fill="'+sleeve+'"/>';
+  s+='<circle cx="32" cy="119" r="6" fill="'+skin+'"/><circle cx="88" cy="119" r="6" fill="'+skin+'"/>';
+  if(L.outfit==='dress')s+='<path d="M42,84 Q60,78 78,84 L94,142 Q60,150 26,142 Z" fill="'+oc+'"/><path d="M30,132 Q60,142 90,132" fill="none" stroke="'+oc2+'" stroke-width="2"/><circle cx="60" cy="98" r="2.5" fill="'+oc2+'"/><circle cx="60" cy="108" r="2.5" fill="'+oc2+'"/>';
+  else s+='<path d="M40,84 Q60,78 80,84 L84,134 Q60,140 36,134 Z" fill="'+base+'"/>';
+  if(L.outfit==='sweater')s+='<path d="M37,128 Q60,134 83,128" fill="none" stroke="'+oc2+'" stroke-width="4"/><path d="M52,82 Q60,90 68,82" fill="none" stroke="'+oc2+'" stroke-width="3"/><path d="M48,100 v20 M60,98 v22 M72,100 v20" stroke="'+oc2+'" stroke-width="1.4" opacity=".4"/>';
+  if(L.outfit==='apron')s+='<path d="M47,90 L73,90 L78,134 Q60,138 42,134 Z" fill="'+oc+'"/><path d="M47,90 L44,82 M73,90 L76,82" stroke="'+oc2+'" stroke-width="3"/><rect x="52" y="112" width="16" height="12" rx="3" fill="'+oc2+'" opacity=".55"/>';
+  if(L.outfit==='overalls')s+='<path d="M47,100 L73,100 L74,134 L46,134 Z" fill="'+oc2+'"/><path d="M50,100 L47,84 M70,100 L73,84" stroke="'+oc2+'" stroke-width="4"/><circle cx="50" cy="102" r="2.4" fill="'+cream+'"/><circle cx="70" cy="102" r="2.4" fill="'+cream+'"/><path d="M46,134 L46,138 Q50,142 56,138 L56,134 M64,134 L64,138 Q70,142 74,138 L74,134" fill="'+oc2+'"/>';
+  /* 頭 */
+  s+='<rect x="54" y="76" width="12" height="12" fill="'+sk2+'"/>';
+  s+='<circle cx="'+(60-fw)+'" cy="54" r="5" fill="'+skin+'"/><circle cx="'+(60+fw)+'" cy="54" r="5" fill="'+skin+'"/>';
+  s+='<ellipse cx="60" cy="52" rx="'+fw+'" ry="'+fh+'" fill="'+skin+'"/>';
+  s+='<ellipse cx="'+(60-fw*.68)+'" cy="64" rx="6" ry="3.6" fill="#F0988C" opacity=".42"/><ellipse cx="'+(60+fw*.68)+'" cy="64" rx="6" ry="3.6" fill="#F0988C" opacity=".42"/>';
+  /* 眼 */
+  var ex=[60-fw*.4,60+fw*.4],ey=56;
+  ex.forEach(function(x){
+    if(L.eyes==='dot')s+='<ellipse cx="'+x+'" cy="'+ey+'" rx="3" ry="4" fill="'+INK+'"/><circle cx="'+(x+1)+'" cy="'+(ey-1.5)+'" r="1" fill="#fff"/>';
+    if(L.eyes==='happy')s+='<path d="M'+(x-4.5)+','+(ey+1.5)+' Q'+x+','+(ey-5.5)+' '+(x+4.5)+','+(ey+1.5)+'" fill="none" stroke="'+INK+'" stroke-width="2.4" stroke-linecap="round"/>';
+    if(L.eyes==='sparkle')s+='<ellipse cx="'+x+'" cy="'+ey+'" rx="4.6" ry="5.8" fill="'+INK+'"/><circle cx="'+(x+1.6)+'" cy="'+(ey-2.2)+'" r="1.8" fill="#fff"/><circle cx="'+(x-1.6)+'" cy="'+(ey+2)+'" r=".9" fill="#fff"/>';
+    if(L.eyes==='sleepy')s+='<path d="M'+(x-4.5)+','+(ey-1)+' Q'+x+','+(ey+4.5)+' '+(x+4.5)+','+(ey-1)+'" fill="none" stroke="'+INK+'" stroke-width="2.4" stroke-linecap="round"/>';
+  });
+  if(L.brows!=='none')ex.forEach(function(x){
+    if(L.brows==='soft')s+='<path d="M'+(x-5)+',46.5 Q'+x+',43 '+(x+5)+',46.5" fill="none" stroke="'+hair2+'" stroke-width="2" stroke-linecap="round"/>';
+    else s+='<path d="M'+(x-5)+',45.5 L'+(x+5)+',45.5" stroke="'+hair2+'" stroke-width="2.2" stroke-linecap="round"/>';
+  });
+  if(L.mouth==='smile')s+='<path d="M54,67 Q60,73 66,67" fill="none" stroke="'+INK+'" stroke-width="2.2" stroke-linecap="round"/>';
+  if(L.mouth==='open')s+='<path d="M54,66 Q60,77 66,66 Z" fill="#C4685C" stroke="'+INK+'" stroke-width="1.6" stroke-linejoin="round"/>';
+  if(L.mouth==='flat')s+='<path d="M56,68 L64,68" stroke="'+INK+'" stroke-width="2.2" stroke-linecap="round"/>';
+  if(L.mouth==='cat')s+='<path d="M53,67 Q56.5,72 60,67 Q63.5,72 67,67" fill="none" stroke="'+INK+'" stroke-width="2" stroke-linecap="round"/>';
+  if(L.acc==='round')s+='<circle cx="'+ex[0]+'" cy="'+ey+'" r="9" fill="rgba(255,255,255,.18)" stroke="#5A4636" stroke-width="2"/><circle cx="'+ex[1]+'" cy="'+ey+'" r="9" fill="rgba(255,255,255,.18)" stroke="#5A4636" stroke-width="2"/><path d="M'+(ex[0]+9)+','+ey+' L'+(ex[1]-9)+','+ey+'" stroke="#5A4636" stroke-width="2"/>';
+  if(L.acc==='square')s+='<rect x="'+(ex[0]-9)+'" y="'+(ey-7)+'" width="18" height="14" rx="4" fill="rgba(255,255,255,.18)" stroke="#5A4636" stroke-width="2"/><rect x="'+(ex[1]-9)+'" y="'+(ey-7)+'" width="18" height="14" rx="4" fill="rgba(255,255,255,.18)" stroke="#5A4636" stroke-width="2"/><path d="M'+(ex[0]+9)+','+ey+' L'+(ex[1]-9)+','+ey+'" stroke="#5A4636" stroke-width="2"/>';
+  if(L.acc==='freckles'){[[-6,62],[-2,64.5],[-9,66],[6,62],[2,64.5],[9,66]].forEach(function(p){s+='<circle cx="'+(60+p[0]*1.6)+'" cy="'+p[1]+'" r="1.1" fill="'+sk2+'"/>';});}
+  /* 前髮 */
+  var l=60-fw-2,r=60+fw+2;
+  var cap='M'+l+',54 C'+(l-5)+',12 '+(r+5)+',12 '+r+',54 C'+(r-4)+',42 '+(r-14)+',32 60,31 C'+(l+14)+',32 '+(l+4)+',42 '+l+',54 Z';
+  if(hs==='curly'){s+='<path d="'+cap+'" fill="'+hair+'"/>';[[36,32],[48,26],[60,24],[72,26],[84,32]].forEach(function(p){s+='<circle cx="'+p[0]+'" cy="'+p[1]+'" r="9" fill="'+hair+'"/>';});}
+  else{
+    s+='<path d="'+cap+'" fill="'+hair+'"/>';
+    if(hs==='short')s+='<path d="M'+(l+2)+',46 Q48,30 70,34 Q'+(r-2)+',36 '+(r-2)+',46 Q74,38 60,40 Q46,38 '+(l+2)+',46 Z" fill="'+hair+'"/>';
+    if(hs==='bob'||hs==='pony'||hs==='bun')s+='<path d="M'+(l+1)+',44 Q60,24 '+(r-1)+',44 L'+(r-1)+',38 Q60,16 '+(l+1)+',38 Z" fill="'+hair+'"/><path d="M'+(l+2)+',50 L'+(l+2)+',42 Q60,34 '+(r-2)+',42 L'+(r-2)+',50 Q60,38 '+(l+2)+',50 Z" fill="'+hair+'"/>';
+    if(hs==='long')s+='<path d="M'+(l+1)+',56 Q'+(l+3)+',40 62,31 Q50,40 '+(l+12)+',56 Z" fill="'+hair+'"/><path d="M'+(r-1)+',56 Q'+(r-3)+',40 58,31 Q70,40 '+(r-12)+',56 Z" fill="'+hair+'"/>';
+  }
+  /* 頭飾 */
+  var hd=L.head;
+  if(hd==='sprout')s+='<path d="M60,32 Q59,22 60,16" stroke="#6E9A66" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M60,18 Q48,10 44,18 Q52,24 60,18 Z" fill="#8DB07B"/><path d="M60,16 Q72,6 78,14 Q70,22 60,16 Z" fill="#A5C493"/>';
+  if(hd==='flowers'){[[34,40,'#E59AA0'],[44,32,'#F2D58B'],[55,29,'#C9A7C9'],[66,29,'#E59AA0'],[77,32,'#F2D58B'],[87,40,'#C9A7C9']].forEach(function(p){s+='<circle cx="'+p[0]+'" cy="'+p[1]+'" r="5.5" fill="'+p[2]+'"/><circle cx="'+p[0]+'" cy="'+p[1]+'" r="2" fill="#FFF6E2"/>';});s+='<path d="M30,44 Q60,22 90,44" fill="none" stroke="#6E9A66" stroke-width="2" opacity=".7"/>';}
+  if(hd==='bow')s+='<path d="M80,28 L96,18 L96,38 Z" fill="#E59AA0"/><path d="M80,28 L64,18 L64,38 Z" fill="#E59AA0"/><circle cx="80" cy="28" r="4.5" fill="#C9707A"/>';
+  if(hd==='straw')s+='<ellipse cx="60" cy="36" rx="47" ry="9" fill="#E3C583"/><path d="M33,36 Q34,8 60,8 Q86,8 87,36 Q60,42 33,36 Z" fill="#EBD091"/><path d="M33,34 Q60,41 87,34 L87,28 Q60,35 33,28 Z" fill="#C9755F"/><path d="M40,16 Q60,12 80,16" fill="none" stroke="#CDAE6C" stroke-width="1.6"/>';
+  return s;
+}
+function charSVG(L,o){o=o||{};var vb=o.crop==='head'?'12 0 96 96':'0 2 120 172';var f=o.flat?'':' filter="url(#wcs)"';
+  return '<svg viewBox="'+vb+'" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="'+esc(o.label||'角色')+'"><g'+f+' stroke="rgba(86,66,48,.4)" stroke-width="1.1" stroke-linejoin="round">'+charG(L)+'</g></svg>';}
+
+/* ========================================================== 小鎮場景 */
+var HW=44,HH=22,TW=84,TH=42,Cc=N/2;
+var HX=N*TW/2,HY=N*TH/2,VBW=900,VBH=640,VCY=150;
+var view={cx:0,cy:150,z:1},rotN=0,sel='ch1',editing=false,pick=null;
+var BLD=[];
+(function(){
+  for(var k=1;k<=9;k++){var a=(45+(k-1)*40)*Math.PI/180;BLD.push({id:'ch'+k,x:Cc+3.9*Math.cos(a),y:Cc+3.9*Math.sin(a),r:1.0});}
+  BLD.push({id:'daily',x:Cc,y:Cc,r:1.5});
+})();
+var TREES=[[0.7,0.7,1],[9.3,0.7,1],[0.7,9.3,1],[0.5,7.2,.85],[7.2,0.5,.85]];
+var AVATAR={x:6.3,y:4.2};
+function bld(id){for(var i=0;i<BLD.length;i++)if(BLD[i].id===id)return BLD[i];}
+function rot(x,y){var px=x-Cc,py=y-Cc,t;for(var i=0;i<rotN;i++){t=px;px=-py;py=t;}return [px+Cc,py+Cc];}
+function P(x,y){var q=rot(x,y);return [(q[0]-q[1])*TW/2,(q[0]+q[1])*TH/2];}
+function f1(n){return (Math.round(n*10)/10);}
+function pts(a){return a.map(function(p){return f1(p[0])+','+f1(p[1]);}).join(' ');}
+function Lp(u,v){return [-HW+HW*u,HH*u-v];}
+function Rp(u,v){return [HW*u,HH-HH*u-v];}
+function quadL(u0,u1,v0,v1){return [Lp(u0,v0),Lp(u1,v0),Lp(u1,v1),Lp(u0,v1)];}
+function quadR(u0,u1,v0,v1){return [Rp(u0,v0),Rp(u1,v0),Rp(u1,v1),Rp(u0,v1)];}
+function poly(a,c,x){return '<polygon class="'+c+'" points="'+pts(a)+'" '+(x||'')+'/>';}
+function seeded(seed){var s=seed;return function(){s=(s*9301+49297)%233280;return s/233280;};}
+
+function sBush(sc){sc=sc||1;return '<g class="sp" transform="scale('+sc+')"><ellipse class="ns" cx="0" cy="2" rx="16" ry="5" fill="var(--shadow)"/><circle class="l3" cx="-9" cy="-6" r="10"/><circle class="l2" cx="9" cy="-6" r="11"/><circle class="l1" cx="0" cy="-13" r="11"/><circle class="ns" cx="-4" cy="-15" r="2.4" fill="#F2B6BE"/><circle class="ns" cx="7" cy="-10" r="2.2" fill="#FFE7A3"/><circle class="ns" cx="-10" cy="-7" r="2" fill="#FFF6E2"/></g>';}
+function sTree(sc){sc=sc||1;return '<g class="sp" transform="scale('+sc+')"><ellipse class="ns" cx="0" cy="2" rx="20" ry="6" fill="var(--shadow)"/><rect class="trunk" x="-4" y="-30" width="8" height="32" rx="3"/><circle class="l3" cx="-12" cy="-40" r="15"/><circle class="l2" cx="13" cy="-42" r="16"/><circle class="l1" cx="0" cy="-54" r="18"/><circle class="ns" cx="-5" cy="-60" r="6" fill="rgba(255,255,255,.28)"/></g>';}
+function sStone(){return '<g class="sp"><ellipse class="stone" cx="-8" cy="1" rx="11" ry="5.5"/><ellipse class="stone" cx="9" cy="-3" rx="10" ry="5"/><ellipse class="stone" cx="-1" cy="-9" rx="9" ry="4.5"/></g>';}
+function sFlower(){var c=['#F2B6BE','#FFE7A3','#D9C2E3'],s='<g class="sp">';[[-8,0],[0,-3],[8,1]].forEach(function(p,i){s+='<path d="M'+p[0]+','+p[1]+' L'+p[0]+','+(p[1]-18)+'" stroke="var(--leaf3)" stroke-width="2"/><circle cx="'+p[0]+'" cy="'+(p[1]-20)+'" r="6.5" fill="'+c[i]+'"/><circle class="ns" cx="'+p[0]+'" cy="'+(p[1]-20)+'" r="2.2" fill="#FFF6E2"/>';});return s+'</g>';}
+function sDeco(id){return {bush:sBush(1),tree:sTree(.8),stone:sStone(),flower:sFlower()}[id];}
+
+function sCottage(){
+  var s='<g class="sp"><ellipse class="ns" cx="0" cy="6" rx="62" ry="22" fill="var(--shadow)"/>';
+  s+=poly([Lp(0,0),Lp(1,0),Lp(1,56),Lp(0,56)],'wL')+poly([Rp(0,0),Rp(1,0),Rp(1,56),Rp(0,56)],'wR');
+  s+=poly(quadL(.1,.36,0,36),'door')+'<circle class="ns" cx="'+f1(Lp(.31,18)[0])+'" cy="'+f1(Lp(.31,18)[1])+'" r="1.8" fill="#F3D79A"/>';
+  s+=poly([Lp(.08,0),Lp(.38,0),Lp(.38,-4),Lp(.08,-4)].map(function(p){return [p[0],p[1]+1];}),'stone');
+  s+=poly(quadL(.54,.86,22,46),'frame')+poly(quadL(.58,.82,25,43),'glass','class="glass glow"');
+  s+=poly(quadR(.14,.42,20,46),'frame')+poly(quadR(.18,.38,23,43),'glass','class="glass glow"');
+  s+=poly(quadR(.58,.86,20,46),'frame')+poly(quadR(.62,.82,23,43),'glass','class="glass glow"');
+  s+=poly(quadR(.1,.9,12,18),'wood');
+  [.2,.34,.5,.66,.8].forEach(function(u,i){var p=Rp(u,22);s+='<circle class="'+(i%2?'l2':'l1')+'" cx="'+f1(p[0])+'" cy="'+f1(p[1])+'" r="6"/>';});
+  [[.3,'#F2B6BE'],[.58,'#FFE7A3'],[.74,'#F2B6BE']].forEach(function(a){var p=Rp(a[0],26);s+='<circle class="ns" cx="'+f1(p[0])+'" cy="'+f1(p[1])+'" r="2.4" fill="'+a[1]+'"/>';});
+  var tl=[-53,-52],tf=[0,-26],tr=[53,-52],ap=[0,-110];
+  s+='<polygon class="rL" points="'+pts([tl,tf,ap])+'"/><polygon class="rR" points="'+pts([tf,tr,ap])+'"/>';
+  s+='<path class="ns" d="M'+tl.join(',')+' L'+tf.join(',')+' L'+tr.join(',')+'" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="2.4"/>';
+  s+='<rect class="wR" x="16" y="-98" width="13" height="26" rx="2"/><rect class="rR" x="14" y="-102" width="17" height="6" rx="2"/>';
+  s+='</g>';return s;
+}
+function sSite(){
+  var s='<g class="sp"><ellipse class="ns" cx="0" cy="6" rx="62" ry="22" fill="var(--shadow)"/>';
+  s+='<polygon points="'+pts([[0,-22],[44,0],[0,22],[-44,0]])+'" fill="var(--path)"/>';
+  s+='<polygon points="'+pts([[0,-14],[28,0],[0,14],[-28,0]])+'" fill="var(--grass2)" opacity=".8"/>';
+  [[-44,0],[0,22],[44,0],[0,-22]].forEach(function(p){s+='<line x1="'+p[0]+'" y1="'+p[1]+'" x2="'+p[0]+'" y2="'+(p[1]-34)+'" stroke="#A9805C" stroke-width="4"/>';});
+  s+='<path d="M-44,-34 L0,-12 L44,-34 L0,-56 Z" fill="none" stroke="#C9755F" stroke-width="2" stroke-dasharray="6 5"/>';
+  s+='<rect class="wood" x="-30" y="-8" width="26" height="6" rx="2" transform="rotate(-14 -17 -5)"/><rect class="wood" x="-26" y="-14" width="26" height="6" rx="2" transform="rotate(8 -13 -11)"/>';
+  s+='<rect class="wood" x="10" y="-4" width="5" height="22"/><rect x="-1" y="-30" width="34" height="22" rx="4" fill="var(--sign)"/><text class="ns" x="16" y="-14" text-anchor="middle" font-size="15" font-weight="700" fill="#4A3A2C" font-family="sans-serif" style="stroke:none">開工</text>';
+  s+='</g>';return s;
+}
+function sGazebo(){
+  var s='<g class="sp"><ellipse class="ns" cx="0" cy="8" rx="78" ry="30" fill="var(--shadow)"/>';
+  s+='<ellipse cx="0" cy="6" rx="62" ry="26" fill="var(--path)"/><ellipse cx="0" cy="2" rx="52" ry="21" class="stone"/>';
+  [[-44,-6],[44,-6],[-22,-17],[22,-17]].forEach(function(p){s+='<rect class="wood" x="'+(p[0]-3)+'" y="'+(p[1]-58)+'" width="6" height="58" rx="2"/>';});
+  s+='<path d="M-60,-60 A60,26 0 0 0 60,-60 L0,-112 Z" fill="var(--rL)"/><path d="M0,-34 A60,26 0 0 0 60,-60 L0,-112 Z" fill="var(--rR)"/>';
+  s+='<path d="M-60,-60 A60,26 0 0 0 60,-60" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="2.4"/>';
+  [[-30,10],[0,22],[30,10]].forEach(function(p){s+='<rect class="wood" x="'+(p[0]-3)+'" y="'+(p[1]-54)+'" width="6" height="54" rx="2"/>';});
+  s+='<circle cx="0" cy="-114" r="5" fill="var(--gold)"/>';
+  s+='<circle class="glass glow" cx="0" cy="-48" r="4" /><path class="ns" d="M0,-60 L0,-52" stroke="#6B5B4B" stroke-width="1.5" style="stroke:#6B5B4B"/>';
+  s+='</g>';return s;
+}
+function sPlot(n){
+  var s='<g class="sp"><polygon points="'+pts([[0,-20],[40,0],[0,20],[-40,0]])+'" fill="var(--path)" opacity=".8" stroke-dasharray="5 4"/><polygon points="'+pts([[0,-11],[22,0],[0,11],[-22,0]])+'" fill="var(--grass2)" opacity=".9" class="ns"/>';
+  s+='<rect class="wood" x="-2" y="-34" width="4" height="34"/><rect x="-13" y="-52" width="26" height="20" rx="4" fill="var(--sign)"/><text class="ns" x="0" y="-41" text-anchor="middle" dominant-baseline="central" font-size="14" font-weight="700" fill="#4A3A2C" font-family="sans-serif" style="stroke:none">'+n+'</text></g>';
+  return s;
+}
+function lblSVG(text,fs,y,selected,lockHint){
+  var w=text.length*fs*1.02+fs*1.4,h=fs*1.75;
+  return '<g class="lbl'+(selected?' sel':'')+'" transform="translate(0,'+f1(y)+')"><rect x="'+f1(-w/2)+'" y="'+f1(-h/2)+'" width="'+f1(w)+'" height="'+f1(h)+'" rx="'+f1(h/2)+'"/><text font-size="'+f1(fs)+'" y="1">'+esc(text)+'</text></g>';
+}
+function sceneSVG(){
+  var sc=$('#scene'),svg=$('#map'),pxu=Math.min(sc.clientWidth/(VBW/view.z),sc.clientHeight/(VBH/view.z))||.5,fs=Math.max(11,Math.min(40,14/pxu));
+  var o='',T=P(0,0),R=P(N,0),B=P(N,N),Lf=P(0,N);
+  /* 地面 */
+  var ztop=[0,0],zr=[HX,HY],zb=[0,2*HY],zl=[-HX,HY],th=26;
+  o+='<g filter="url(#wc)"><polygon points="'+pts([zl,zb,[0,2*HY+th],[-HX,HY+th]])+'" fill="var(--soil1)"/><polygon points="'+pts([zb,zr,[HX,HY+th],[0,2*HY+th]])+'" fill="var(--soil2)"/>';
+  o+='<polygon points="'+pts([ztop,zr,zb,zl])+'" fill="var(--grass)"/><polygon points="'+pts([[0,22],[HX-40,HY],[0,2*HY-22],[-HX+40,HY]])+'" fill="var(--grass2)" opacity=".7"/></g>';
+  var rnd=seeded(11);
+  o+='<g filter="url(#wc)" opacity=".5">';
+  for(var i=0;i<60;i++){var gx=rnd()*N,gy=rnd()*N,p=P(gx,gy),rr=10+rnd()*20;o+='<ellipse cx="'+f1(p[0])+'" cy="'+f1(p[1])+'" rx="'+f1(rr*1.6)+'" ry="'+f1(rr*.8)+'" fill="'+(i%3?'var(--leaf2)':'var(--grass2)')+'" opacity="'+(.25+rnd()*.3).toFixed(2)+'"/>';}
+  o+='</g>';
+  /* 小徑 */
+  var c0=P(Cc,Cc),pa='';
+  BLD.forEach(function(b){if(b.id==='daily')return;var e=P(b.x+(b.x<Cc?0.3:-0.3)*0,b.y),m=P((b.x+Cc)/2+(b.y-Cc)*.12,(b.y+Cc)/2-(b.x-Cc)*.12);pa+='M'+f1(c0[0])+','+f1(c0[1])+' Q'+f1(m[0])+','+f1(m[1])+' '+f1(e[0])+','+f1(e[1]);});
+  o+='<g filter="url(#wc)" fill="none" stroke-linecap="round"><path d="'+pa+'" class="path1" stroke-width="22"/><path d="'+pa+'" class="path2" stroke-width="16"/></g>';
+  /* 小花點 */
+  o+='<g>';var r2=seeded(5);for(var j=0;j<44;j++){var q=P(r2()*N,r2()*N);o+='<circle cx="'+f1(q[0])+'" cy="'+f1(q[1])+'" r="2.2" fill="'+['#F2B6BE','#FFF6E2','#FFE7A3'][j%3]+'" opacity=".85"/>';}o+='</g>';
+  /* 布置格 */
+  var occ=blockedMap();
+  if(editing){
+    o+='<g>';
+    for(var gx2=0;gx2<N;gx2++)for(var gy2=0;gy2<N;gy2++){
+      var k=gx2+','+gy2,cs=[P(gx2,gy2),P(gx2+1,gy2),P(gx2+1,gy2+1),P(gx2,gy2+1)];
+      if(occ[k])o+='<polygon class="tile no" points="'+pts(cs)+'"/>';
+      else o+='<polygon class="tile ok" data-gx="'+gx2+'" data-gy="'+gy2+'" points="'+pts(cs)+'"/>';
+    }
+    o+='</g>';
+  }
+  /* 物件（依深度排序） */
+  var items=[];
+  TREES.forEach(function(t){var p=P(t[0],t[1]);items.push({d:p[1],s:'<g transform="translate('+f1(p[0])+','+f1(p[1])+')" filter="url(#wc)">'+sTree(t[2])+'</g>'});});
+  S.placed.forEach(function(it,idx){
+    var p=P(it.x+.5,it.y+.5),flat=it.id==='stone';
+    items.push({d:flat?p[1]-900:p[1],s:'<g class="putd" data-pi="'+idx+'" transform="translate('+f1(p[0])+','+f1(p[1])+')"'+(editing?'':' pointer-events="none"')+' filter="url(#wc)"><title>'+DECO[it.id]+(editing?'：點一下收回':'')+'</title>'+sDeco(it.id)+'</g>'});
+  });
+  var ap=P(AVATAR.x,AVATAR.y);
+  items.push({d:ap[1],s:'<g transform="translate('+f1(ap[0])+','+f1(ap[1])+') scale(.42) translate(-60,-166)"><g filter="url(#wcs)" stroke="rgba(86,66,48,.4)" stroke-width="1.6" stroke-linejoin="round">'+charG(S.player.look)+'</g></g>'});
+  BLD.forEach(function(b){
+    var p=P(b.x,b.y),id=b.id,sp,st,lab,ly,isSel=sel===id,cls='',al,plot=false;
+    if(id==='daily'){sp=sGazebo();lab=buildingName('daily');ly=-134;al='晨光亭：每日心智練習';}
+    else{
+      var i=+id.slice(2);st=chapterState(i);
+      if(st==='built'){sp=sCottage();lab=buildingName(id);ly=-128;al=lab+'（已完成）';if(S.justBuilt===id)cls=' rise';}
+      else if(st==='open'){sp=sSite();lab='第 1 章・可開工';ly=-80;al='第 1 章 '+C1.title+'（可開工）';}
+      else{sp=sPlot(i);lab=isSel?'第 '+i+' 章・尚未開放':'';ly=-68;al='第 '+i+' 章 '+CH[i-1].t+'（尚未開放）';plot=true;}
+    }
+    var ring=isSel?'<ellipse cx="0" cy="6" rx="'+(id==='daily'?80:66)+'" ry="'+(id==='daily'?30:25)+'" fill="none" stroke="var(--gold)" stroke-width="4" opacity=".95"/>':'';
+    var dis=editing?' pointer-events="none"':'';
+    items.push({d:p[1]+(id==='daily'?-60:0),s:'<g class="bld" role="button" tabindex="'+(editing?-1:0)+'" data-id="'+id+'" aria-label="'+esc(al)+'" transform="translate('+f1(p[0])+','+f1(p[1])+')"'+dis+'>'+ring+'<g class="'+cls.trim()+'" filter="url(#wc)">'+sp+'</g><ellipse class="hit" cx="0" cy="'+(plot?-24:-42)+'" rx="'+(plot?36:(id==='daily'?72:58))+'" ry="'+(plot?36:(id==='daily'?72:58))+'"/>'+(lab?lblSVG(lab,fs,ly,isSel):'')+'</g>'});
+  });
+  items.sort(function(a,b){return a.d-b.d;});
+  o+=items.map(function(x){return x.s;}).join('');
+  svg.innerHTML=o;
+  S.justBuilt=null;
+  applyView();
+}
+function blockedMap(){
+  var m={};
+  for(var gx=0;gx<N;gx++)for(var gy=0;gy<N;gy++){
+    var cx=gx+.5,cy=gy+.5,bad=false;
+    BLD.forEach(function(b){if(Math.hypot(b.x-cx,b.y-cy)<b.r+.1)bad=true;});
+    TREES.forEach(function(t){if(Math.hypot(t[0]-cx,t[1]-cy)<.8)bad=true;});
+    if(Math.hypot(AVATAR.x-cx,AVATAR.y-cy)<.8)bad=true;
+    if(bad)m[gx+','+gy]=1;
+  }
+  S.placed.forEach(function(p){m[p.x+','+p.y]=1;});
+  return m;
+}
+function clampView(){
+  var w=VBW/view.z,h=VBH/view.z,x0=-VBW/2,x1=VBW/2,y0=-170,y1=470;
+  view.cx=w>=x1-x0?0:Math.max(x0+w/2,Math.min(x1-w/2,view.cx));
+  view.cy=h>=y1-y0?VCY:Math.max(y0+h/2,Math.min(y1-h/2,view.cy));
+}
+function applyView(){clampView();var w=VBW/view.z,h=VBH/view.z;$('#map').setAttribute('viewBox',f1(view.cx-w/2)+' '+f1(view.cy-h/2)+' '+f1(w)+' '+f1(h));}
+function focusOn(x,y,z){var p=P(x,y);view.cx=p[0];view.cy=p[1]-40;if(z)view.z=z;sceneSVG();}
+
+/* ========================================================== 小鎮 UI */
+var mapMode=true;
+function renderTown(){
+  sceneSVG();renderInfo();renderList();renderTray();
+  var n=0;for(var i=1;i<=9;i++)if(done('ch'+i))n++;
+  $('#progChip').textContent='已蓋好 '+n+' / 9 棟';
+  $('#editBtn').setAttribute('aria-pressed',editing);
+  $('#editBtn').textContent=editing?'完成':'布置';
+  $('#sceneTip').textContent=editing?'點空格放下裝飾・點已放的收回':'拖曳移動・點建築看看';
+  var st=$('.stars');if(!st.firstChild){var r=seeded(3),h='';for(var k=0;k<26;k++)h+='<i style="left:'+(r()*100).toFixed(1)+'%;top:'+(r()*45).toFixed(1)+'%"></i>';st.innerHTML=h;}
+}
+function renderInfo(){
+  var b=sel,el=$('#infoBox'),h='';
+  if(b==='daily'){
+    var drew=S.daily.date===today()&&S.daily.id;
+    h='<div><span class="chip">中央廣場</span></div><h2>晨光亭</h2><p class="muted">每日心智練習：抽一張今天的語句卡，收進明信片冊，也會獲得一朵小花。</p>'
+     +'<p class="small muted">已收集明信片 '+S.postcards.filter(function(c){return c.kind==='daily'}).length+' / 7 張</p>'
+     +'<button type="button" class="btn" data-act="openDaily">'+(drew?'看看今天的卡':'抽今天的卡')+'</button>';
+  }else{
+    var i=+b.slice(2),st=chapterState(i),c=CH[i-1];
+    h='<div><span class="chip '+(st==='built'?'ok':(st==='open'?'warn':''))+'">'+(st==='built'?'已蓋好':st==='open'?'可開工':'尚未開放')+'</span></div>'
+     +'<h2>'+esc(st==='built'?buildingName(b):('第 '+i+' 章'))+'</h2>'
+     +'<p><b>第 '+i+' 章｜'+esc(c.t)+'</b></p>';
+    if(i===1){
+      h+='<p class="muted">'+esc(C1.sub)+'</p><ul class="small">'+C1.objectives.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul><p class="small muted">約 '+C1.minutes+' 分鐘・測驗可無限重試，沒有分數壓力</p>';
+      h+='<button type="button" class="btn" data-act="openCh1">'+(st==='built'?'重新閱讀':'進入第 1 章')+'</button>';
+      if(st==='built')h+='<button type="button" class="btn ghost small" data-act="rename">替建築改名</button>';
+    }else{
+      h+='<p class="lockline"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></svg>這一章之後開放，先去逛逛其他地方吧。</p>';
+    }
+  }
+  el.innerHTML=h;
+}
+function renderList(){
+  var h='';BLD.slice().sort(function(a,b){return (a.id==='daily'?-1:0)-(b.id==='daily'?-1:0);}).forEach(function(b){
+    var id=b.id,t,s;
+    if(id==='daily'){t='晨光亭｜每日心智練習';s='隨時可玩';}
+    else{var i=+id.slice(2),st=chapterState(i);t='第 '+i+' 章｜'+CH[i-1].t;s=st==='built'?'已蓋好 ✓':st==='open'?'可開工':'尚未開放';}
+    h+='<button type="button" data-id="'+id+'"><span><b>'+esc(t)+'</b></span><span class="muted small">'+s+'</span></button>';
+  });
+  $('#listBox').innerHTML=h;
+}
+function renderTray(){
+  var el=$('#trayBox');el.hidden=!editing;if(!editing)return;
+  var h='<div class="lab">選一個裝飾，再點地圖上的空格</div><div class="tray">';var any=false;
+  Object.keys(DECO).forEach(function(k){var n=S.inv[k]||0;if(!n&&pick!==k)return;any=true;h+='<button type="button" class="btn small ghost" data-pick="'+k+'" aria-pressed="'+(pick===k)+'"'+(n?'':' disabled')+'>'+DECO[k]+' ×'+n+'</button>';});
+  if(!any)h+='<span class="muted small">沒有可放的裝飾了。多讀幾章、多抽幾張每日卡就會有新的。</span>';
+  el.innerHTML=h+'</div>';
+  $$('[data-pick]',el).forEach(function(b){b.setAttribute('aria-pressed',pick===b.getAttribute('data-pick'));});
+}
+function selectB(id,focus){
+  sel=id;
+  if(focus){var b=bld(id);focusOn(b.x,b.y,Math.max(view.z,1.5));}else sceneSVG();
+  renderInfo();
+}
+
+/* 場景互動 */
+(function(){
+  var sc=$('#scene'),down=false,moved=false,sx=0,sy=0,vcx=0,vcy=0,pid=null;
+  sc.addEventListener('pointerdown',function(e){if(e.target.closest('.scene-ctl'))return;down=true;moved=false;sx=e.clientX;sy=e.clientY;vcx=view.cx;vcy=view.cy;pid=e.pointerId;});
+  window.addEventListener('pointermove',function(e){
+    if(!down)return;var dx=e.clientX-sx,dy=e.clientY-sy;
+    if(!moved&&Math.hypot(dx,dy)>6){moved=true;sc.classList.add('drag');}
+    if(moved){var pxu=Math.min(sc.clientWidth/(VBW/view.z),sc.clientHeight/(VBH/view.z));view.cx=vcx-dx/pxu;view.cy=vcy-dy/pxu;applyView();}
+  });
+  window.addEventListener('pointerup',function(){if(!down)return;down=false;sc.classList.remove('drag');setTimeout(function(){moved=false;},0);});
+  $('#map').addEventListener('click',function(e){
+    if(moved)return;
+    var t=e.target.closest('.tile.ok');
+    if(t&&editing){
+      if(!pick||!(S.inv[pick]>0)){toast('先在下方選一個裝飾');return;}
+      S.inv[pick]--;S.placed.push({id:pick,x:+t.getAttribute('data-gx'),y:+t.getAttribute('data-gy')});save();
+      if(!(S.inv[pick]>0))pick=null;renderTown();return;
+    }
+    var pd=e.target.closest('.putd');
+    if(pd&&editing){var it=S.placed.splice(+pd.getAttribute('data-pi'),1)[0];S.inv[it.id]=(S.inv[it.id]||0)+1;save();renderTown();return;}
+    var b=e.target.closest('.bld');if(b&&!editing)selectB(b.getAttribute('data-id'),false);
+  });
+  $('#map').addEventListener('keydown',function(e){if((e.key==='Enter'||e.key===' ')&&e.target.classList&&e.target.classList.contains('bld')){e.preventDefault();selectB(e.target.getAttribute('data-id'),false);}});
+  $('#rotL').onclick=function(){rotN=(rotN+3)%4;sceneSVG();};
+  $('#rotR').onclick=function(){rotN=(rotN+1)%4;sceneSVG();};
+  $('#zoomIn').onclick=function(){view.z=Math.min(2.6,view.z*1.3);sceneSVG();};
+  $('#zoomOut').onclick=function(){view.z=Math.max(1,view.z/1.3);sceneSVG();};
+  $('#editBtn').onclick=function(){editing=!editing;pick=null;renderTown();};
+  sc.addEventListener('wheel',function(e){if(!e.ctrlKey)return;e.preventDefault();view.z=Math.max(1,Math.min(2.6,view.z*(e.deltaY<0?1.12:.9)));sceneSVG();},{passive:false});
+  $('#modeMap').onclick=function(){setMapMode(true);};
+  $('#modeList').onclick=function(){setMapMode(false);};
+  function setMapMode(m){mapMode=m;$('#modeMap').setAttribute('aria-pressed',m);$('#modeList').setAttribute('aria-pressed',!m);sc.hidden=!m;$('#listBox').hidden=m;if(m)sceneSVG();}
+  $('#listBox').addEventListener('click',function(e){var b=e.target.closest('[data-id]');if(b){sel=b.getAttribute('data-id');renderInfo();$('#infoBox').scrollIntoView({behavior:'smooth',block:'nearest'});}});
+  $('#trayBox').addEventListener('click',function(e){var b=e.target.closest('[data-pick]');if(b&&!b.disabled){pick=pick===b.getAttribute('data-pick')?null:b.getAttribute('data-pick');renderTray();}});
+  var rt;window.addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(function(){if(!$('#v-town').hidden&&mapMode)sceneSVG();},150);});
+})();
+$('#infoBox').addEventListener('click',function(e){
+  var a=e.target.closest('[data-act]');if(!a)return;var act=a.getAttribute('data-act');
+  if(act==='openCh1')openLesson();
+  if(act==='openDaily')openDaily();
+  if(act==='rename'){var v=window.prompt('替「'+buildingName('ch1')+'」取一個新名字（最多 12 字）',buildingName('ch1'));if(v!==null){v=v.trim().slice(0,12);if(v){S.names.ch1=v;save();renderTown();toast('已改名為「'+v+'」');}}}
+});
+
+/* ========================================================== 章節面板 */
+var sheet=$('#sheet'),LS=null,sheetMode=null,lastFocus=null;
+function showSheet(title){
+  lastFocus=document.activeElement;sheet.classList.add('on');document.body.classList.add('lock');$('#app').inert=true;
+  $('#sheetT').textContent=title;$('#sheetBody').scrollTop=0;
+}
+function hideSheet(){sheet.classList.remove('on');document.body.classList.remove('lock');$('#app').inert=false;sheetMode=null;LS=null;if(lastFocus&&lastFocus.focus)lastFocus.focus();}
+$('#sheetBack').onclick=function(){hideSheet();renderTown();};
+document.addEventListener('keydown',function(e){if(e.key==='Escape'&&sheet.classList.contains('on')){hideSheet();renderTown();}});
+
+var STEPS=['歡迎','閱讀','互動','故事','小測驗','小練習','收穫','完成'];
+function openLesson(){
+  LS={step:0,card:0,q:0,qok:{},wrong:{},walks:0,avenue:0,msg:'',cs:0,csShown:{},action:null,refl:'',take:null,mode:S.settings.mode,name:null};
+  sheetMode='ch1';showSheet('第 1 章｜'+C1.title);lessonRender();
+}
+function cardsList(){
+  var list=[],full=LS.mode==='full';
+  C1.sections.forEach(function(s){
+    if(full)list.push({h:s.h,p:s.p,call:s.call});
+    else if(C1.shortPick[s.id]){list.push({h:s.h,p:C1.shortPick[s.id].map(function(i){return s.p[i];}),call:s.call});}
+  });
+  list.push({kw:true,h:'四個關鍵字'});
+  return list;
+}
+function lessonRender(){
+  var s=LS.step,dots='',inn='',foot='',p='';
+  for(var i=0;i<STEPS.length;i++)dots+='<i class="'+(i<=s?'on':'')+'"></i>';
+  var d=$('#sheetDots');d.innerHTML=dots;d.setAttribute('aria-valuemax',STEPS.length);d.setAttribute('aria-valuenow',s+1);d.setAttribute('aria-valuetext','第 '+(s+1)+' 步，共 '+STEPS.length+' 步：'+STEPS[s]);
+  var back='<button type="button" class="btn ghost" data-l="back"'+(s===0?' style="visibility:hidden"':'')+'>上一步</button>';
+  var next=function(label,en){return '<button type="button" class="btn" data-l="next"'+(en===false?' disabled':'')+'>'+label+'</button>';};
+  if(s===0){
+    inn='<div class="card stack lesson-card"><span class="chip">約 '+C1.minutes+' 分鐘</span><h3>'+esc(C1.title)+'</h3><p class="muted">'+esc(C1.sub)+'</p><div><b>這一章你會…</b><ul>'+C1.objectives.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul></div>'
+      +'<div><div class="lab">閱讀版本</div><div class="segs" role="group" aria-label="閱讀版本"><button type="button" class="seg" data-l="mode" data-v="short" aria-pressed="'+(LS.mode==='short')+'">精簡版</button><button type="button" class="seg" data-l="mode" data-v="full" aria-pressed="'+(LS.mode==='full')+'">完整版</button></div><p class="hint-note" style="margin-top:6px">精簡版 6 張卡、完整版 11 張卡（含關鍵字卡），隨時可以回來換。</p></div></div>';
+    foot=back+next('開始');
+  }
+  if(s===1){
+    var L=cardsList(),c=L[LS.card];LS.cards=L.length;
+    if(c.kw)inn='<div class="card lesson-card"><span class="chip">'+(LS.card+1)+' / '+L.length+'</span><h3 style="margin-top:8px">'+c.h+'</h3><div class="kw">'+C1.concepts.map(function(k){return '<div><b>'+esc(k[0])+'</b>'+esc(k[1])+'</div>';}).join('')+'</div></div>';
+    else inn='<div class="card lesson-card"><span class="chip">'+(LS.card+1)+' / '+L.length+'</span><h3 style="margin-top:8px">'+esc(c.h)+'</h3>'+c.p.map(function(t){return '<p>'+esc(t)+'</p>';}).join('')+(c.call?'<div class="callout"><b>'+esc(c.call[0])+'：</b>'+esc(c.call[1])+'</div>':'')+'</div>';
+    foot=back+next(LS.card<L.length-1?'下一張':'下一步');
+  }
+  if(s===2){
+    var tw=LS.walks,trail=Math.min(18,3+tw*2.6),av=Math.max(10,28-tw*1.8);
+    var steps=['','小徑上還有很多草，走起來有點費力。','草被踩平了一些。','路慢慢出現了。','走起來比剛剛輕鬆。','小徑越來越清楚了，大道邊緣也開始長出草。'];
+    var fp='';for(var k=0;k<Math.min(tw,8);k++){fp+='<ellipse cx="'+(46+k*28)+'" cy="'+(150-k*10)+'" rx="5" ry="3" fill="#8A6B4E" opacity=".45"/>';}
+    inn='<div class="card stack lesson-card"><h3>羊腸小徑與柏油大道</h3><p>試著走走看：每走一次小徑，草就被踩平一些。</p>'
+     +'<div class="walkbox"><svg viewBox="0 0 320 190" role="img" aria-label="一條寬寬的柏油大道與一條細細的草地小徑，小徑會隨著走的次數變寬"><rect width="320" height="190" fill="var(--grass)"/><g fill="var(--leaf2)" opacity=".7"><circle cx="60" cy="40" r="22"/><circle cx="250" cy="150" r="26"/><circle cx="170" cy="30" r="16"/></g>'
+     +'<path id="avenue" d="M24,60 C110,48 200,52 292,92" fill="none" stroke="#B7AFA2" stroke-width="'+av+'" stroke-linecap="round"/><path d="M24,60 C110,48 200,52 292,92" fill="none" stroke="#8F8678" stroke-width="2" stroke-dasharray="10 12" opacity=".7"/>'
+     +'<path id="trail" d="M24,160 C90,130 180,150 292,92" fill="none" stroke="#7FA36E" stroke-width="'+trail+'" stroke-linecap="round"/>'
+     +'<path d="M24,160 C90,130 180,150 292,92" fill="none" stroke="#E8D9B6" stroke-width="'+Math.max(0,trail-6)+'" stroke-linecap="round" opacity=".85"/>'
+     +'<text x="24" y="28" font-size="13" fill="#2F3A33" font-family="sans-serif">柏油大道（舊習慣）</text><text x="24" y="184" font-size="13" fill="#2F3A33" font-family="sans-serif">羊腸小徑（新習慣）</text>'
+     +'<g><circle cx="24" cy="110" r="11" fill="#FFF6E2" stroke="#6B5B4B"/><text x="24" y="110" text-anchor="middle" dominant-baseline="central" font-size="11" fill="#2F3A33" font-family="sans-serif">起點</text></g><g><circle cx="292" cy="92" r="12" fill="#E8C46A" stroke="#6B5B4B"/><text x="292" y="92" text-anchor="middle" dominant-baseline="central" font-size="11" fill="#2F3A33" font-family="sans-serif">目標</text></g>'
+     +fp+'<circle id="walker" cx="24" cy="110" r="0" fill="#E9B8A8" stroke="#6B5B4B" stroke-width="1.5"/></svg></div>'
+     +'<div class="row"><button type="button" class="btn ghost" data-l="walkA" style="flex:1">走柏油大道</button><button type="button" class="btn" data-l="walkT" style="flex:1">走小徑（'+tw+'）</button></div>'
+     +'<div class="feedback" aria-live="polite">'+esc(LS.msg||'先選一條路走走看。回到大道也沒關係，沒有對或錯。')+'</div>'
+     +'<div class="callout"><b>'+esc(C1.sections[5].call[0])+'：</b>'+esc(C1.sections[5].call[1])+'</div></div>';
+    foot=back+(tw>=5?next('下一步'):'<button type="button" class="btn ghost" data-l="next">先略過</button>');
+    LS.stepsMsg=steps;
+  }
+  if(s===3){
+    var full=LS.mode==='full',cs=full?C1.cases:[C1.cases[0]];
+    inn=cs.map(function(c,i){var show=LS.csShown[i];return '<div class="card stack lesson-card" style="margin-bottom:12px"><span class="chip">小故事 '+(i+1)+'</span><h3>'+esc(c.t)+'</h3><p>'+esc(c.s)+'</p>'+(show?'<div class="feedback good"><b>這段在說：</b>'+esc(c.i)+'</div>':'<button type="button" class="btn ghost small" data-l="case" data-i="'+i+'" style="align-self:flex-start">看看這段在說什麼</button>')+'</div>';}).join('');
+    foot=back+next('下一步');
+  }
+  if(s===4){
+    var q=C1.quiz[LS.q],ok=LS.qok[LS.q],w=LS.wrong[LS.q]||{};
+    inn='<div class="card lesson-card"><span class="chip">小測驗 '+(LS.q+1)+' / '+C1.quiz.length+'</span><h3 style="margin-top:8px">'+esc(q.q)+'</h3><p class="hint-note">可以重複作答，沒有分數。</p><div role="group" aria-label="選項">'
+      +q.o.map(function(t,i){var cl=ok&&i===q.a?' right':(w[i]?' wrong':'');return '<button type="button" class="opt'+cl+'" data-l="ans" data-i="'+i+'"'+(ok?' disabled':'')+'><span class="mk" aria-hidden="true">'+(ok&&i===q.a?'✓':String.fromCharCode(65+i))+'</span><span>'+esc(t)+'</span></button>';}).join('')+'</div>'
+      +(ok?'<div class="feedback good" role="status"><b>答對了。</b>'+esc(q.e)+'</div>':(Object.keys(w).length?'<div class="feedback soft" role="status">這個選項還不太對，沒關係，再想想看。</div>':''))+'</div>';
+    foot=back+next(LS.q<C1.quiz.length-1?'下一題':'下一步',!!ok);
+  }
+  if(s===5){
+    inn='<div class="card stack lesson-card"><h3>今天的一個小練習</h3><p>選一個你願意試試看的小行動：</p><div role="group" aria-label="小行動">'+C1.apps.map(function(t,i){return '<button type="button" class="opt" data-l="act" data-i="'+i+'" aria-pressed="'+(LS.action===i)+'"><span class="mk" aria-hidden="true">'+(LS.action===i?'✓':'')+'</span><span>'+esc(t)+'</span></button>';}).join('')+'</div>'
+     +'<div><label class="lab" for="refl">想一想（選填）</label><p class="hint-note" style="margin-bottom:6px">'+esc(C1.reflection)+'</p><textarea id="refl" maxlength="600" placeholder="寫下來，只會存在你的瀏覽器">'+esc(LS.refl)+'</textarea></div></div>';
+    foot=back+next('下一步',LS.action!==null);
+  }
+  if(s===6){
+    inn='<div class="card stack lesson-card"><h3>選一句你想帶走的話</h3><p class="muted">它會變成一張明信片，收進你的明信片冊。</p><div role="group" aria-label="收穫">'+C1.summary.map(function(t,i){return '<button type="button" class="opt" data-l="take" data-i="'+i+'" aria-pressed="'+(LS.take===i)+'"><span class="mk" aria-hidden="true">'+(LS.take===i?'✓':'')+'</span><span>'+esc(t)+'</span></button>';}).join('')+'</div></div>';
+    foot=back+next('完成這一章',LS.take!==null);
+  }
+  if(s===7){
+    var petals='';var pc=['#F2B6BE','#FFE7A3','#D9C2E3','#CFE5B8'];for(var q2=0;q2<12;q2++)petals+='<i style="left:'+(q2*8.5)+'%;background:'+pc[q2%4]+';animation-delay:'+(q2*.5)+'s;animation-duration:'+(5+q2%4)+'s"></i>';
+    var first=!done('ch1');
+    inn='<div class="petals" aria-hidden="true">'+petals+'</div><div class="card stack lesson-card"><span class="chip ok">第 1 章完成</span><h3>'+esc(S.player.name||'你')+'，小徑工坊蓋好了！</h3><p>你走完了這一章。回到舊習慣也沒關係，小徑還在建造中。</p>'
+     +'<div class="reward">'+(first?'<div class="it"><svg viewBox="12 0 96 96" aria-hidden="true"><g>'+charG(Object.assign({},S.player.look,{head:'straw'}))+'</g></svg><span><b>草帽</b><br><span class="small muted">新的頭飾</span></span></div><div class="it"><svg viewBox="-30 -30 60 50" aria-hidden="true">'+sStone()+'</svg><span><b>小徑石板 ×4</b><br><span class="small muted">可擺進小鎮</span></span></div>':'<span class="muted small">獎勵已經領過了。</span>')+'<div class="it"><svg viewBox="0 0 120 80" aria-hidden="true"><rect x="10" y="12" width="100" height="56" rx="8" fill="#F2E2B5"/><rect x="10" y="12" width="100" height="14" rx="8" fill="#CFE5B8"/></svg><span><b>明信片</b><br><span class="small muted">已收進明信片冊</span></span></div></div>'
+     +'<div><label class="lab" for="bname">幫這棟建築取個名字</label><input id="bname" type="text" maxlength="12" value="'+esc(buildingName('ch1'))+'"></div></div>';
+    foot='<span></span><button type="button" class="btn" data-l="finish">回到小鎮</button>';
+  }
+  $('#sheetIn').innerHTML=inn;$('#sheetFoot').innerHTML=foot;
+}
+function walk(path){
+  var sv=$('#walker');if(!sv||!path||!path.getTotalLength||window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  var L=path.getTotalLength(),t0=performance.now();sv.setAttribute('r','7');
+  (function step(t){var k=Math.min(1,(t-t0)/700),p=path.getPointAtLength(L*k);sv.setAttribute('cx',p.x);sv.setAttribute('cy',p.y);if(k<1)requestAnimationFrame(step);else sv.setAttribute('r','0');})(t0);
+}
+sheet.addEventListener('input',function(e){if(e.target.id==='refl')LS.refl=e.target.value;});
+sheet.addEventListener('click',function(e){
+  var b=e.target.closest('[data-l]');if(!b||!LS||sheetMode!=='ch1')return;var a=b.getAttribute('data-l'),i=+b.getAttribute('data-i');
+  if(b.disabled)return;
+  if(a==='next'){
+    if(LS.step===1&&LS.card<LS.cards-1)LS.card++;
+    else if(LS.step===4&&LS.q<C1.quiz.length-1)LS.q++;
+    else LS.step++;
+    lessonRender();$('#sheetBody').scrollTop=0;$('#sheetT').focus();return;
+  }
+  if(a==='back'){
+    if(LS.step===1&&LS.card>0)LS.card--;
+    else if(LS.step===4&&LS.q>0)LS.q--;
+    else {LS.step--;if(LS.step===1)LS.card=LS.cards-1;if(LS.step===4)LS.q=C1.quiz.length-1;}
+    lessonRender();$('#sheetBody').scrollTop=0;return;
+  }
+  if(a==='mode'){LS.mode=b.getAttribute('data-v');lessonRender();return;}
+  if(a==='walkT'){LS.walks++;LS.msg=LS.stepsMsg[Math.min(5,LS.walks)];var keep=$('#sheetBody').scrollTop;lessonRender();$('#sheetBody').scrollTop=keep;walk($('#trail'));return;}
+  if(a==='walkA'){LS.avenue++;LS.msg='大道好走，不用想就上去了。回來也沒關係，小徑還在建造中。';var k2=$('#sheetBody').scrollTop;lessonRender();$('#sheetBody').scrollTop=k2;walk($('#avenue'));return;}
+  if(a==='case'){LS.csShown[i]=true;lessonRender();return;}
+  if(a==='ans'){
+    var q=C1.quiz[LS.q];
+    if(i===q.a)LS.qok[LS.q]=true;else{LS.wrong[LS.q]=LS.wrong[LS.q]||{};LS.wrong[LS.q][i]=true;}
+    var k3=$('#sheetBody').scrollTop;lessonRender();$('#sheetBody').scrollTop=k3;return;
+  }
+  if(a==='act'){LS.action=i;var k4=$('#sheetBody').scrollTop;lessonRender();$('#sheetBody').scrollTop=k4;return;}
+  if(a==='take'){LS.take=i;var k5=$('#sheetBody').scrollTop;lessonRender();$('#sheetBody').scrollTop=k5;return;}
+  if(a==='finish'){
+    var nm=($('#bname').value||'').trim().slice(0,12);if(nm)S.names.ch1=nm;
+    if(!done('ch1')){
+      S.progress.ch1={done:true,at:nowISO(),mode:LS.mode,action:LS.action,reflection:LS.refl,take:LS.take};
+      S.inv.stone=(S.inv.stone||0)+4;if(S.unlocks.indexOf('ch1')<0)S.unlocks.push('ch1');
+      S.postcards.push({id:'ch1',kind:'chapter',title:'第 1 章｜'+C1.title,text:C1.summary[LS.take],at:nowISO()});
+      S.justBuilt='ch1';
+      toast('獲得：草帽、小徑石板 ×4、1 張明信片');
+    }
+    save();hideSheet();sel='ch1';setTab('town');var bb=bld('ch1');focusOn(bb.x,bb.y,Math.max(view.z,1.4));renderInfo();renderList();
+  }
+});
+
+/* ========================================================== 每日練習 */
+function openDaily(){
+  sheetMode='daily';showSheet('晨光亭｜每日心智練習');
+  if(S.daily.date!==today()||!S.daily.id){drawDaily(false);}
+  dailyRender();
+}
+function drawDaily(avoid){
+  var have={};S.postcards.forEach(function(c){if(c.kind==='daily')have[c.id]=1;});
+  var pool=DAILY.filter(function(d){return !have['d'+d.id]&&d.id!==(avoid?S.daily.id:0);});
+  if(!pool.length)pool=DAILY.filter(function(d){return d.id!==(avoid?S.daily.id:0);});
+  S.daily={date:today(),id:pool[Math.floor(Math.random()*pool.length)].id};save();
+}
+function dailyRender(){
+  var d=DAILY[S.daily.id-1],has=S.postcards.some(function(c){return c.id==='d'+d.id;});
+  $('#sheetDots').innerHTML='';$('#sheetDots').removeAttribute('aria-valuenow');
+  $('#sheetIn').innerHTML='<div class="card stack lesson-card"><span class="chip">今天的卡｜'+esc(d.theme)+'</span><h3 style="font-size:28px;line-height:1.5">「'+esc(d.text)+'」</h3>'
+    +'<div><b>這句話在練習什麼</b><p>'+esc(d.meaning)+'</p></div><div><b>想一想</b><p>'+esc(d.reflection)+'</p></div><div><b>小行動</b><p>'+esc(d.action)+'</p></div>'
+    +(d.note?'<div class="callout">'+esc(d.note)+'</div>':'')
+    +'<p class="hint-note">'+esc(NO_PRESSURE)+'</p></div>';
+  $('#sheetFoot').innerHTML='<button type="button" class="btn ghost" data-d="again">換一張</button>'+(has?'<span class="chip ok">已收進明信片冊</span>':'<button type="button" class="btn" data-d="keep">收進明信片冊＋小花</button>');
+}
+sheet.addEventListener('click',function(e){
+  var b=e.target.closest('[data-d]');if(!b||sheetMode!=='daily')return;
+  if(b.getAttribute('data-d')==='again'){drawDaily(true);dailyRender();}
+  if(b.getAttribute('data-d')==='keep'){var d=DAILY[S.daily.id-1];if(!S.postcards.some(function(c){return c.id==='d'+d.id;})){S.postcards.push({id:'d'+d.id,kind:'daily',title:d.theme,text:d.text,at:nowISO()});S.inv.flower=(S.inv.flower||0)+1;save();toast('收進明信片冊了，獲得一朵小花');}dailyRender();renderInfo();}
+});
+
+/* ========================================================== 角色與收藏 */
+var meCat='skin',firstRun=false;
+function optTile(cat,idx,o){
+  var L=Object.assign({},S.player.look),sw=SWATCH[cat],cur=S.player.look[cat],val=sw?idx:o.id,name=o.name,lock=!sw&&o.req&&!unlocked(o.req);
+  L[cat]=val;var on=cur===val;
+  if(sw)return '<button type="button" class="otile" data-cat="'+cat+'" data-val="'+val+'" aria-pressed="'+on+'"><span class="sw" style="background:'+o.c+'"></span><span>'+esc(name)+'</span></button>';
+  return '<button type="button" class="otile" data-cat="'+cat+'" data-val="'+esc(val)+'" aria-pressed="'+on+'"'+(lock?' disabled':'')+'>'+(lock?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></svg>':charSVG(L,{crop:CRAWL[cat]==='head'?'head':'body',flat:true,label:name}))+'<span>'+esc(name)+(lock?'<br>'+o.reqName+'解鎖':'')+'</span></button>';
+}
+function renderMe(){
+  var Lk=S.player.look;
+  $('#meAvatar').innerHTML=charSVG(Lk,{label:'我的角色'});
+  if(document.activeElement!==$('#nameIn'))$('#nameIn').value=S.player.name;
+  $('#whoBtn').innerHTML=charSVG(Lk,{crop:'head',flat:true,label:''})+'<span>'+esc(S.player.name||'旅人')+'</span>';
+  $('#catSegs').innerHTML=CATS.map(function(c){return '<button type="button" class="seg" data-c="'+c[0]+'" aria-pressed="'+(meCat===c[0])+'">'+c[1]+'</button>';}).join('');
+  var h='';OPT[meCat].forEach(function(o,i){h+=optTile(meCat,i,o);});
+  (FUTURE[meCat]||[]).forEach(function(f){h+='<button type="button" class="otile" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></svg><span>'+f[0]+'<br>第 '+f[1]+' 章解鎖</span></button>';});
+  $('#opts').innerHTML=h;$('#opts').setAttribute('aria-label',CATS.filter(function(c){return c[0]===meCat;})[0][1]);
+  /* 收藏 */
+  var dh='';Object.keys(DECO).forEach(function(k){var own=(S.inv[k]||0),pl=S.placed.filter(function(p){return p.id===k}).length;if(own+pl===0)return;dh+='<div class="d"><svg viewBox="-24 -64 48 70" aria-hidden="true">'+sDeco(k)+'</svg><span><b>'+DECO[k]+'</b><br><span class="small muted">可放 '+own+'・已放 '+pl+'</span></span></div>';});
+  $('#decoBox').innerHTML=dh||'<span class="muted">還沒有裝飾。</span>';
+  $('#pcBox').innerHTML=S.postcards.length?S.postcards.slice().reverse().map(function(c){return '<article class="pc '+c.kind+'"><div class="bar">'+(c.kind==='daily'?'每日練習':'章節')+'｜'+esc(c.title)+'</div><p>'+esc(c.text)+'</p></article>';}).join(''):'<span class="muted">讀完章節或抽每日卡，就會有明信片。</span>';
+  var fb=$('#firstBanner');fb.hidden=!firstRun;
+  if(firstRun)fb.innerHTML='<div class="row" style="align-items:center;justify-content:space-between"><div><b>先打造你的角色吧</b><p class="small muted">之後隨時都能回來調整。</p></div><button type="button" class="btn" id="goTown">完成，去小鎮</button></div>';
+}
+$('#opts').addEventListener('click',function(e){
+  var b=e.target.closest('.otile');if(!b||b.disabled)return;var cat=b.getAttribute('data-cat'),v=b.getAttribute('data-val');
+  S.player.look[cat]=SWATCH[cat]?+v:v;save();renderMe();
+  var again=$('#opts [data-cat="'+cat+'"][data-val="'+v+'"]');if(again)again.focus();
+});
+$('#catSegs').addEventListener('click',function(e){var b=e.target.closest('[data-c]');if(!b)return;meCat=b.getAttribute('data-c');renderMe();var s=$('#catSegs [data-c="'+meCat+'"]');if(s)s.focus();});
+$('#nameIn').addEventListener('input',function(e){S.player.name=e.target.value.slice(0,12);save();$('#whoBtn').lastChild.textContent=S.player.name||'旅人';});
+$('#rndBtn').onclick=function(){
+  var L=S.player.look;
+  Object.keys(OPT).forEach(function(k){var arr=OPT[k].map(function(o,i){return SWATCH[k]?i:o;}).filter(function(o){return SWATCH[k]||!o.req||unlocked(o.req);});var p=arr[Math.floor(Math.random()*arr.length)];L[k]=SWATCH[k]?p:p.id;});
+  save();renderMe();
+};
+$('#rstBtn').onclick=function(){S.player.look=defaultLook();save();renderMe();};
+$('#whoBtn').onclick=function(){setTab('me');};
+document.addEventListener('click',function(e){if(e.target.id==='goTown'){firstRun=false;setTab('town');}});
+
+/* ========================================================== 設定 */
+function renderSet(){
+  function segs(el,list,cur,key){el.innerHTML=list.map(function(o){return '<button type="button" class="seg" data-k="'+key+'" data-v="'+o[0]+'" aria-pressed="'+(cur===o[0])+'">'+o[1]+'</button>';}).join('');}
+  segs($('#segTheme'),[['auto','自動'],['day','白天'],['night','夜晚']],S.settings.theme,'theme');
+  segs($('#segMode'),[['short','精簡版'],['full','完整版']],S.settings.mode,'mode');
+}
+$('#v-set').addEventListener('click',function(e){
+  var b=e.target.closest('[data-k]');if(!b)return;S.settings[b.getAttribute('data-k')]=b.getAttribute('data-v');save();applyTheme();renderSet();
+});
+$('#expBtn').onclick=function(){
+  try{var blob=new Blob([JSON.stringify(S,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='rewire2-backup-'+today()+'.json';document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove();},500);toast('已匯出備份');}catch(err){toast('匯出失敗，請換個瀏覽器試試');}
+};
+$('#impFile').addEventListener('change',function(e){
+  var f=e.target.files[0];if(!f)return;var r=new FileReader();
+  r.onload=function(){try{var j=JSON.parse(r.result);if(!j||typeof j!=='object'||!j.player)throw 0;if(!window.confirm('匯入會取代目前的進度，確定嗎？'))return;S=normalize(j);S.onboarded=true;save();applyTheme();renderAll();toast('已匯入備份');}catch(err){toast('這個檔案看起來不是 Rewire 的備份');}};
+  r.readAsText(f);e.target.value='';
+});
+$('#clrBtn').onclick=function(){
+  if(!window.confirm('要清除章節進度、建築、裝飾與收藏嗎？名字、角色與設定會保留。'))return;
+  var keep={player:S.player,settings:S.settings},n=emptyData();n.player=keep.player;n.settings=keep.settings;n.onboarded=true;S=n;save();sel='ch1';renderAll();toast('已清除紀錄');
+};
+
+/* ========================================================== 分頁與啟動 */
+function setTab(t){
+  ['town','me','set'].forEach(function(k){$('#v-'+k).hidden=k!==t;});
+  $$('.tab').forEach(function(b){if(b.getAttribute('data-tab')===t)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
+  if(t==='town')renderTown();if(t==='me')renderMe();if(t==='set')renderSet();
+  window.scrollTo(0,0);
+}
+$$('.tab').forEach(function(b){b.onclick=function(){setTab(b.getAttribute('data-tab'));};});
+function renderAll(){renderMe();renderSet();renderTown();}
+$('#welGo').onclick=function(){
+  S.player.name=($('#welName').value||'').trim().slice(0,12);S.onboarded=true;save();$('#welcome').classList.remove('on');$('#app').inert=false;firstRun=true;setTab('me');
+  var r=$('#rndBtn');if(r)r.focus();
+};
+$('#welName').addEventListener('keydown',function(e){if(e.key==='Enter')$('#welGo').click();});
+
+applyTheme();
+(function init(){
+  var small=window.innerWidth<640;
+  var b=bld('ch1');var p=P(b.x,b.y);view.z=small?1.7:1;view.cx=small?p[0]:0;view.cy=small?p[1]-20:VCY;
+  renderMe();renderSet();setTab('town');
+  if(!S.onboarded){$('#welcome').classList.add('on');$('#app').inert=true;setTimeout(function(){$('#welName').focus();},50);}
+})();
+window.addEventListener('load',function(){if(!$('#v-town').hidden)sceneSVG();});
+})();
+</script>
+</body>
+</html>
